@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-Time Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="phone">
+
+    <div class="header">
+        Real-Time Analysis
+    </div>
+
+    <div class="lesson-info">
+        <div class="lesson-name">{{ lesson_name }}</div>
+        <div class="lesson-time">{{ lesson_time }}</div>
+    </div>
+
+    <div class="section">
+        <h3>Classroom Map</h3>
+        <div class="classroom">
+            <div class="spot green"></div>
+            <div class="spot yellow"></div>
+            <div class="spot red"></div>
+            <div class="spot green"></div>
+            <div class="spot yellow"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="collapsible" onclick="toggleSection('overview')">Overview</div>
+        <div class="content" id="overview">
+            {% for k, v in overview.items() %}
+                <p>{{ k }}: {{ v }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="collapsible" onclick="toggleSection('graphs')">Graphs</div>
+        <div class="content" id="graphs">
+            <div class="attention-value">{{ avg_attention }}%</div>
+            <canvas id="attentionTime" width="350" height="150"></canvas>
+            <canvas id="attentionPie" width="200" height="200"></canvas>
+            <script>
+                // Line chart for attention over time
+                const ctxTime = document.getElementById('attentionTime').getContext('2d');
+                new Chart(ctxTime, {
+                    type: 'line',
+                    data: {
+                        labels: ['0','10','20','30','40','50'],
+                        datasets: [{
+                            label: 'Attention %',
+                            data: {{ attention_time }},
+                            borderColor: '#7c3aed',
+                            backgroundColor: 'rgba(124,58,237,0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        plugins: { legend: { labels: { color: '#000000' } } },
+                        scales: {
+                            x: { ticks: { color: '#000000' } },
+                            y: { ticks: { color: '#000000' }, suggestedMin: 0, suggestedMax: 100 }
+                        }
+                    }
+                });
+
+                // Pie chart for attention distribution
+                const ctxPie = document.getElementById('attentionPie').getContext('2d');
+                new Chart(ctxPie, {
+                    type: 'pie',
+                    data: {
+                        labels: [{% for k in attention_distribution.keys() %}'{{ k }}',{% endfor %}],
+                        datasets: [{
+                            data: [{% for v in attention_distribution.values() %}{{ v }},{% endfor %}],
+                            backgroundColor: ['#4c1d95', '#a78bfa', '#e9d5ff'] // High→dark, Low→light
+                        }]
+                    },
+                    options: {
+                        plugins: { legend: { labels: { color: '#000000', font: { size: 14 } } } }
+                    }
+                });
+            </script>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="collapsible" onclick="toggleSection('suggestions')">Suggestions</div>
+        <div class="content" id="suggestions">
+            <ul class="suggestions">
+                {% for s in suggestions %}
+                    <li>{{ s }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function toggleSection(id) {
+    const content = document.getElementById(id);
+    content.style.display = content.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+</body>
+</html>

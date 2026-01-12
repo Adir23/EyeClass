@@ -1,0 +1,98 @@
+body {
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+    color: #000000;
+}
+
+.phone {
+    width: 390px;
+    height: 844px;
+    background: #ffffff;
+    margin: 20px auto;
+    border-radius: 25px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+.header {
+    background: #7c3aed;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.lesson-info {
+    padding: 16px;
+    text-align: center;
+}
+
+.lesson-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.lesson-time {
+    font-size: 18px;
+    color: #5b21b6;
+    margin-top: 4px;
+}
+
+.section {
+    padding: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.attention-value {
+    font-size: 36px;
+    font-weight: bold;
+    color: #7c3aed;
+    margin: 10px 0;
+}
+
+.classroom {
+    background: #f3f4f6;
+    border-radius: 12px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 16px;
+}
+
+.spot {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.green { background: #22c55e; }
+.yellow { background: #facc15; }
+.red { background: #ef4444; }
+
+.suggestions li {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+h3 {
+    color: #7c3aed;
+    margin-bottom: 10px;
+}
+
+.collapsible {
+    cursor: pointer;
+    padding: 10px;
+    background: #e0d7f5;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.content {
+    display: block;
+    padding: 10px 0;
+}
