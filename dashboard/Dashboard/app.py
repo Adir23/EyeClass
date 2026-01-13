@@ -1,32 +1,31 @@
+import json
 from flask import Flask, render_template
+
 app = Flask(__name__)
 
 @app.route("/")
 def dashboard():
-    lesson_name = "Mathematics – Class 8B"
-    lesson_time = "08:15 – 09:50"
-    avg_attention = 72
+    # Open data json
+    with open("data.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-    overview = {
-        "Total Students": 18,
-        "Attentive Students": 12,
-        "Distracted Students": 6
-    }
-
-    attention_time = [70, 75, 72, 68, 74, 70]
-
-    attention_distribution = {
-        "High": 10,
-        "Medium": 5,
-        "Low": 3
-    }
+    # Unpack json
+    lesson_name = data["lesson"]["name"]
+    lesson_time = data["lesson"]["time"]
+    avg_attention = data["avg_attention"]
+    overview = data["overview"]
+    attention_time = data["attention_time"]
+    attention_distribution = data["attention_distribution"]
 
     suggestions = [
         "Consider a short interactive question",
         "Attention dropped in the back of the class",
-        "A short break may improve focus"
+        "A short break may improve focus",
+        "Try assigning a class work",
+        "Use visual aids to regain focus"
     ]
 
+    # Render page
     return render_template(
         "index.html",
         lesson_name=lesson_name,
@@ -38,5 +37,6 @@ def dashboard():
         suggestions=suggestions
     )
 
+# Run dashboard
 if __name__ == "__main__":
     app.run(debug=True)
