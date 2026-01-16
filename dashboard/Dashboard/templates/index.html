@@ -2,116 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lesson Summary</title>
+    <title>Real-Time Analysis</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="phone">
-    <div class="header">Lesson Summary</div>
+
+    <div class="header">Real-Time Analysis</div>
 
     <div class="lesson-info">
-        <div class="lesson-name">{{ lesson_name }}</div>
-        <div class="lesson-time">{{ lesson_time }}</div>
+        <div class="lesson-name">{{ lesson.name }}</div>
+        <div class="lesson-time">{{ lesson.time }}</div>
     </div>
 
     <div class="section">
-        <h3>Classroom Map</h3>
+        <h3 class="center-title">Classroom Map</h3>
         <div class="classroom">
-            <div class="spot green"></div>
-            <div class="spot yellow"></div>
-            <div class="spot red"></div>
-            <div class="spot green"></div>
-            <div class="spot yellow"></div>
-            <div class="spot green"></div>
+            {% for s in students %}
+                {% if s.attention >= 70 %}
+                    <div class="spot green" data-value="{{ s.attention }}"></div>
+                {% elif s.attention >= 50 %}
+                    <div class="spot yellow" data-value="{{ s.attention }}"></div>
+                {% else %}
+                    <div class="spot red" data-value="{{ s.attention }}"></div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 
     <div class="tabs">
-        <button class="tab active" onclick="openTab('overview')">Overview</button>
-        <button class="tab" onclick="openTab('graphs')">Graphs</button>
-        <button class="tab" onclick="openTab('suggestions')">Suggestions</button>
+        <div class="tab active" onclick="showTab('overview')">Overview</div>
+        <div class="tab" onclick="showTab('graphs')">Graphs</div>
+        <div class="tab" onclick="showTab('suggestions')">Suggestions</div>
     </div>
 
-    <div id="overview" class="tab-content active">
-        <div class="overview-cards">
+    <div class="tab-content active" id="overview">
+        <div class="overview-grid">
             {% for k, v in overview.items() %}
-            <div class="card">
-                <div class="card-title">{{ k }}</div>
-                <div class="card-value">
-                    {{ v }}{% if k.lower() == "attentive students" or k.lower() == "distracted students" %} ({{ (v / overview["Total Students"] * 100)|round(0) }}%) {% endif %}
+                <div class="overview-card">
+                    <div class="overview-title">{{ k }}</div>
+                    <div class="overview-value">{{ v }}</div>
                 </div>
-            </div>
             {% endfor %}
-            <div class="card">
-                <div class="card-title">Average Attention</div>
-                <div class="card-value">{{ avg_attention }}%</div>
+            <div class="overview-card">
+                <div class="overview-title">Max Attention</div>
+                <div class="overview-value">{{ max_attention }}%</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-title">Min Attention</div>
+                <div class="overview-value">{{ min_attention }}%</div>
             </div>
         </div>
     </div>
 
+    <div class="tab-content" id="graphs">
+        <div class="graph-switch">
+            <button id="btnLine" class="active" onclick="showGraph('line')">Over Time</button>
+            <button id="btnPie" onclick="showGraph('pie')">Distribution</button>
+        </div>
 
-    <div id="graphs" class="tab-content">
-        <div class="attention-value">{{ avg_attention }}%</div>
-        <canvas id="attentionTime" width="350" height="150"></canvas>
-        <canvas id="attentionPie" width="200" height="200"></canvas>
+        <div class="avg-label">Average Attention: {{ avg_attention }}%</div>
+
+        <canvas id="lineChart"></canvas>
+        <canvas id="pieChart" style="display:none;"></canvas>
     </div>
 
-    <div id="suggestions" class="tab-content">
-        <ul class="suggestions">
+    <div class="tab-content" id="suggestions">
+        <div class="suggestion-card">
             {% for s in suggestions %}
-            <li>{{ s }}</li>
+                <div class="suggestion-item">{{ s }}</div>
             {% endfor %}
-        </ul>
+        </div>
+
+        <div class="ai-box">
+            <div class="ai-title">Ask AI</div>
+            <input type="text" placeholder="Ask about improving attention...">
+            <button>Ask</button>
+        </div>
     </div>
+
 </div>
 
 <script>
-function openTab(id) {
+function showTab(id) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     event.target.classList.add('active');
     document.getElementById(id).classList.add('active');
 }
 
-// Line chart for attention over time
-const ctxTime = document.getElementById('attentionTime').getContext('2d');
-new Chart(ctxTime, {
+function showGraph(type) {
+    document.getElementById('lineChart').style.display = type === 'line' ? 'block' : 'none';
+    document.getElementById('pieChart').style.display = type === 'pie' ? 'block' : 'none';
+
+    document.getElementById('btnLine').classList.toggle('active', type === 'line');
+    document.getElementById('btnPie').classList.toggle('active', type === 'pie');
+}
+
+new Chart(lineChart, {
     type: 'line',
     data: {
         labels: ['0','10','20','30','40','50'],
         datasets: [{
-            label: 'Attention %',
             data: {{ attention_time }},
             borderColor: '#7c3aed',
-            backgroundColor: 'rgba(124,58,237,0.2)',
+            backgroundColor: 'rgba(124,58,237,0.25)',
             fill: true,
             tension: 0.4
         }]
     },
     options: {
-        plugins: { legend: { labels: { color: '#000000' } } },
-        scales: {
-            x: { ticks: { color: '#000000' } },
-            y: { ticks: { color: '#000000' }, suggestedMin: 0, suggestedMax: 100 }
-        }
+        plugins: { legend: { display: false } },
+        scales: { y: { min: 0, max: 100 } }
     }
 });
 
-// Pie chart for attention distribution
-const ctxPie = document.getElementById('attentionPie').getContext('2d');
-new Chart(ctxPie, {
+new Chart(pieChart, {
     type: 'pie',
     data: {
         labels: [{% for k in attention_distribution.keys() %}'{{ k }}',{% endfor %}],
         datasets: [{
             data: [{% for v in attention_distribution.values() %}{{ v }},{% endfor %}],
-            backgroundColor: ['#4c1d95', '#a78bfa', '#e9d5ff']
+            backgroundColor: ['#7c3aed','#a78bfa','#d8b4fe']
         }]
-    },
-    options: {
-        plugins: { legend: { labels: { color: '#000000', font: { size: 14 } } } }
     }
 });
 </script>

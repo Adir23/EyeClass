@@ -6,24 +6,24 @@ body {
 .phone {
     width: 390px;
     height: 844px;
-    margin: auto;
+    margin: 20px auto;
     border-radius: 25px;
     box-shadow: 0 0 20px rgba(0,0,0,0.2);
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .header {
     background: #7c3aed;
     color: white;
     text-align: center;
-    padding: 25px;
+    padding: 20px;
     font-size: 26px;
     font-weight: bold;
 }
 
 .lesson-info {
     text-align: center;
-    padding: 16px;
+    padding: 12px;
 }
 
 .lesson-name {
@@ -32,50 +32,76 @@ body {
 }
 
 .lesson-time {
-    color: #5b21b6;
     font-size: 18px;
+    color: #5b21b6;
 }
 
 .section {
-    padding: 16px;
+    padding: 14px;
+}
+
+.center-title {
+    text-align: center;
+    color: #7c3aed;
 }
 
 .classroom {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
     background: #f3f4f6;
-    padding: 20px;
-    border-radius: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    justify-items: center;
+    align-items: center;
 }
 
 .spot {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
-    margin: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spot::after {
+    content: attr(data-value) "%";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    font-weight: bold;
+}
+
+.spot:hover::after {
+    opacity: 1;
 }
 
 .green { background: #22c55e; }
+.green::after { color: #14532d; }
+
 .yellow { background: #facc15; }
+.yellow::after { color: #713f12; }
+
 .red { background: #ef4444; }
+.red::after { color: #7f1d1d; }
 
 .tabs {
     display: flex;
     justify-content: space-around;
-    margin: 12px 16px;
+    padding: 10px;
 }
 
 .tab {
-    flex: 1;
-    padding: 10px;
-    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
     background: #ede9fe;
-    cursor: pointer;
     font-weight: bold;
-    border-radius: 15px;
-    margin: 0 4px;
-    font-size: 16px;
+    cursor: pointer;
 }
 
 .tab.active {
@@ -85,49 +111,115 @@ body {
 
 .tab-content {
     display: none;
-    padding: 16px;
+    padding: 14px;
 }
 
 .tab-content.active {
     display: block;
 }
 
-.attention-value {
-    font-size: 36px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.suggestions li {
-    margin-bottom: 8px;
-}
-
-.overview-cards {
-    display: flex;
-    flex-wrap: wrap;
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    justify-content: space-around;
 }
 
-.card {
-    flex: 1 1 120px;
-    background: #ede9fe;
+.overview-card {
+    background: #f5f3ff;
+    padding: 14px;
     border-radius: 12px;
-    padding: 12px;
     text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.card-title {
+.overview-title {
     font-size: 14px;
-    font-weight: bold;
     color: #5b21b6;
+}
+
+.overview-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #7c3aed;
+}
+
+.graph-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 6px;
 }
 
-.card-value {
-    font-size: 18px;
+.graph-switch button {
+    padding: 6px 14px;
+    border-radius: 14px;
+    border: none;
+    background: #a78bfa;
+    color: white;
+    cursor: pointer;
+}
+
+.graph-switch button.active {
+    background: #7c3aed;
+}
+
+.avg-label {
+    text-align: center;
     font-weight: bold;
     color: #7c3aed;
+    margin-bottom: 6px;
+}
+
+canvas {
+    max-height: 230px;
+}
+
+.suggestion-card {
+    display: grid;
+    gap: 8px;
+    background: #e5dbff;
+    padding: 10px;
+    border-radius: 16px;
+}
+
+.suggestion-item {
+    background: #cdb8e3;
+    padding: 8px;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #3c096c;
+}
+
+.ai-box {
+    margin-top: 8px;
+    background: #e0ccff;
+    padding: 10px;
+    border-radius: 16px;
+    max-width: 100%;
+}
+
+.ai-title {
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #7c3aed;
+}
+
+.ai-box input {
+    width: 100%;
+    padding: 6px;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    border: 1px solid #7c3aed;
+    background: #ffffff;
+    color: #000000;
+    box-sizing: border-box;
+}
+
+.ai-box button {
+    width: 100%;
+    padding: 6px;
+    background: #7c3aed;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
 }

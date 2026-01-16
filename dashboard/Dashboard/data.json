@@ -7,12 +7,31 @@
   "overview": {
     "Total Students": 24,
     "Attentive Students": 18,
-    "Distracted Students": 6
+    "Distracted Students": 6,
+    "Total Interruptions": 5,
+    "Longest Focus Span": 12,
+    "Average Attention": 72
   },
+  "students": [
+    { "attention": 85 },
+    { "attention": 78 },
+    { "attention": 62 },
+    { "attention": 45 },
+    { "attention": 90 },
+    { "attention": 70 },
+    { "attention": 55 },
+    { "attention": 30 },
+    { "attention": 88 },
+    { "attention": 66 },
+    { "attention": 72 },
+    { "attention": 40 }
+  ],
   "attention_time": [70, 75, 72, 68, 74, 70],
   "attention_distribution": {
     "High": 13,
     "Medium": 5,
     "Low": 6
-  }
+  },
+  "max_attention": 85,
+  "min_attention": 32
 }
