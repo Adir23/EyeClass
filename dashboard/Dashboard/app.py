@@ -13,7 +13,7 @@ def dashboard():
         lesson=data["lesson"],
         avg_attention=data["avg_attention"],
         overview=data["overview"],
-        students=data["students"],
+        blocks=data["blocks"],
         attention_time=data["attention_time"],
         attention_distribution=data["attention_distribution"],
         max_attention=data["max_attention"],

@@ -47,23 +47,19 @@ body {
 
 .classroom {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
     background: #f3f4f6;
-    padding: 14px;
+    padding: 18px;
     border-radius: 14px;
     justify-items: center;
-    align-items: center;
 }
 
 .spot {
-    width: 45px;
-    height: 45px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .spot::after {
@@ -175,14 +171,14 @@ canvas {
 
 .suggestion-card {
     display: grid;
-    gap: 8px;
-    background: #e5dbff;
+    gap: 6px;
+    background: #f4efff;
     padding: 10px;
-    border-radius: 16px;
+    border-radius: 18px;
 }
 
 .suggestion-item {
-    background: #cdb8e3;
+    background: #e6dcff;
     padding: 8px;
     border-radius: 12px;
     font-size: 14px;
@@ -191,10 +187,9 @@ canvas {
 
 .ai-box {
     margin-top: 8px;
-    background: #e0ccff;
+    background: #f1ebff;
     padding: 10px;
-    border-radius: 16px;
-    max-width: 100%;
+    border-radius: 18px;
 }
 
 .ai-title {
@@ -209,8 +204,6 @@ canvas {
     margin-bottom: 6px;
     border-radius: 10px;
     border: 1px solid #7c3aed;
-    background: #ffffff;
-    color: #000000;
     box-sizing: border-box;
 }
 

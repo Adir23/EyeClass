@@ -20,13 +20,13 @@
     <div class="section">
         <h3 class="center-title">Classroom Map</h3>
         <div class="classroom">
-            {% for s in students %}
-                {% if s.attention >= 70 %}
-                    <div class="spot green" data-value="{{ s.attention }}"></div>
-                {% elif s.attention >= 50 %}
-                    <div class="spot yellow" data-value="{{ s.attention }}"></div>
+            {% for b in blocks %}
+                {% if b.attention >= 70 %}
+                    <div class="spot green" data-value="{{ b.attention }}"></div>
+                {% elif b.attention >= 50 %}
+                    <div class="spot yellow" data-value="{{ b.attention }}"></div>
                 {% else %}
-                    <div class="spot red" data-value="{{ s.attention }}"></div>
+                    <div class="spot red" data-value="{{ b.attention }}"></div>
                 {% endif %}
             {% endfor %}
         </div>
@@ -47,11 +47,11 @@
                 </div>
             {% endfor %}
             <div class="overview-card">
-                <div class="overview-title">Max Attention</div>
+                <div class="overview-title">Max Average Attention</div>
                 <div class="overview-value">{{ max_attention }}%</div>
             </div>
             <div class="overview-card">
-                <div class="overview-title">Min Attention</div>
+                <div class="overview-title">Min Average Attention</div>
                 <div class="overview-value">{{ min_attention }}%</div>
             </div>
         </div>
@@ -96,7 +96,6 @@ function showTab(id) {
 function showGraph(type) {
     document.getElementById('lineChart').style.display = type === 'line' ? 'block' : 'none';
     document.getElementById('pieChart').style.display = type === 'pie' ? 'block' : 'none';
-
     document.getElementById('btnLine').classList.toggle('active', type === 'line');
     document.getElementById('btnPie').classList.toggle('active', type === 'pie');
 }
