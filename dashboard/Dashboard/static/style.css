@@ -10,6 +10,7 @@ body {
     border-radius: 25px;
     box-shadow: 0 0 20px rgba(0,0,0,0.2);
     overflow: hidden;
+    position: relative;
 }
 
 .header {
@@ -215,4 +216,47 @@ canvas {
     border: none;
     border-radius: 12px;
     cursor: pointer;
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 14px;
+    border: 1px solid #7c3aed;
+    box-sizing: border-box;
+}
+
+.main-btn {
+    width: 100%;
+    padding: 10px;
+    background: #7c3aed;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.time-row {
+    display: flex;
+    gap: 8px;
+}
+
+.new-lesson-btn-container {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.new-lesson-btn-container .main-btn {
+    background: #8039ea;
+    color: white;
+    width: 80%;
+    max-width: 280px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }

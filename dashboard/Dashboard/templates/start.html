@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Start Lesson</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="phone">
+    <div class="header">Start Lesson</div>
+
+    <div class="section">
+        <form method="post">
+
+            <input class="input" name="teacher" placeholder="Teacher name" required>
+
+            <select class="input" name="class">
+                <option>Class 1</option>
+                <option>Class 2</option>
+                <option>Class 3</option>
+            </select>
+
+            <select class="input" name="subject">
+                <option>Mathematics</option>
+                <option>English</option>
+                <option>Science</option>
+            </select>
+
+            <input class="input" name="lesson" placeholder="Lesson name">
+
+            <div class="time-row">
+                <input class="input" type="time" name="start_time" required>
+                <input class="input" type="time" name="end_time" required>
+            </div>
+
+            <button class="main-btn">Start Analysis</button>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
