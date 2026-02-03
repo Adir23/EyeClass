@@ -4,20 +4,28 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = "eyeclass-secret"
 
+
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+
 @app.route("/start", methods=["GET", "POST"])
 def start():
     if request.method == "POST":
-        session["teacher"] = request.form["teacher"]
+        session.clear()
         session["class"] = request.form["class"]
         session["subject"] = request.form["subject"]
         session["lesson"] = request.form["lesson"]
         session["time"] = f'{request.form["start_time"]} – {request.form["end_time"]}'
-        return redirect("/")
+        return redirect("/dashboard")
+
     return render_template("start.html")
 
-@app.route("/")
+
+@app.route("/dashboard")
 def dashboard():
-    required = ["teacher", "class", "subject", "lesson", "time"]
+    required = ["class", "subject", "lesson", "time"]
     if not all(k in session for k in required):
         return redirect("/start")
 
@@ -46,10 +54,12 @@ def dashboard():
         ]
     )
 
-@app.route("/logout")
-def logout():
+
+@app.route("/new-lesson")
+def new_lesson():
     session.clear()
     return redirect("/start")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
