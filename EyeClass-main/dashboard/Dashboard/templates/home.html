@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eyeclass</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="phone">
+
+        <div class="top-bar">
+            <div class="logo-text">Eyeclass</div>
+            <div class="profile-circle">👩‍🏫</div>
+        </div>
+
+        <div class="welcome">
+            <h1>Welcome Back!</h1>
+            <p>Track classroom attention and get instant insights</p>
+        </div>
+
+        <a href="/start" class="primary-action">
+            <div class="primary-icon">▶</div>
+            <div>
+                <div class="primary-title">Start Lesson</div>
+                <div class="primary-sub">Real-time attention tracking</div>
+            </div>
+        </a>
+
+        <div class="quick-actions">
+            <a href="/history" class="quick-card gradient1">
+                <div class="quick-icon">📚</div>
+                <div>
+                    <div class="quick-title">History</div>
+                    <div class="quick-sub">Past lessons</div>
+                </div>
+            </a>
+
+            <a href="/report" class="quick-card gradient2">
+                <div class="quick-icon">📈</div>
+                <div>
+                    <div class="quick-title">Reports</div>
+                    <div class="quick-sub">Weekly insights</div>
+                </div>
+            </a>
+
+            <a href="/schedule" class="quick-card gradient3">
+                <div class="quick-icon">🗓️</div>
+                <div>
+                    <div class="quick-title">Schedule</div>
+                    <div class="quick-sub">Plan lessons</div>
+                </div>
+            </a>
+
+            <a href="/consultAi" class="quick-card gradient4">
+                <div class="quick-icon">💡</div>
+                <div>
+                    <div class="quick-title">Consult AI</div>
+                    <div class="quick-sub">Teaching tips</div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

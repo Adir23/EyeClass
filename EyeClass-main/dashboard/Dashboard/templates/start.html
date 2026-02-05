@@ -1,0 +1,63 @@
+<div class="phone">
+    <div class="header">Start Lesson</div>
+
+    <div class="content">
+        <form method="post">
+            <div class="form-card">
+                <label>Lesson Topic</label>
+                <input class="input" name="lesson_topic" placeholder="Enter lesson topic" required>
+            </div>
+
+            <div class="form-card">
+                <label>Subject</label>
+                <select class="input" name="subject" required>
+                    <option disabled selected>Select Subject</option>
+                    <option>Mathematics</option>
+                    <option>English</option>
+                    <option>Science</option>
+                </select>
+            </div>
+
+            <div class="form-card">
+                <label>Class</label>
+                <select class="input" name="class" required>
+                    <option disabled selected>Select Class</option>
+                    <option>Class 1</option>
+                    <option>Class 2</option>
+                    <option>Class 3</option>
+                </select>
+            </div>
+
+            <div class="form-card">
+                <label>Date</label>
+                <input type="date" name="lesson_date" class="input" required>
+            </div>
+
+            <div class="form-card time-row">
+                <div>
+                    <label>Start Time</label>
+                    <input type="time" name="start_time" required>
+                </div>
+                <div>
+                    <label>End Time</label>
+                    <input type="time" name="end_time" required>
+                </div>
+            </div>
+
+            <div class="form-card switch-card">
+                <label>
+                    <input type="checkbox" name="record_audio">
+                    Record Audio & AI Feedback
+                </label>
+            </div>
+
+            <button class="main-btn">Start Lesson</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const dateInput = document.querySelector('input[name="lesson_date"]');
+    const today = new Date();
+    dateInput.value = today.toISOString().split('T')[0];
+</script>

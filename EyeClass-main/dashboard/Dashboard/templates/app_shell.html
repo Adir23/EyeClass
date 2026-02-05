@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Eyeclass Ultra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span class="time">9:41</span>
+            <div class="status-icons">
+                <i data-lucide="signal" size="14"></i>
+                <i data-lucide="wifi" size="14"></i>
+                <i data-lucide="battery-full" size="14" class="battery-icon"></i>
+            </div>
+        </div>
+
+        <header class="app-header" id="mainHeader">
+            <div class="header-content home-header active">
+                <div class="avatar-container">
+                    <img src="https://i.pravatar.cc/100?img=5" alt="User" class="avatar-img">
+                    <div class="online-status"></div>
+                </div>
+                <div class="header-text">
+                    <span class="greeting">Welcome back,</span>
+                    <span class="username">Sarah V.</span>
+                </div>
+                <button class="icon-btn notification-btn"><i data-lucide="bell-ring"></i><span class="notif-dot"></span></button>
+            </div>
+
+            <div class="header-content dash-header">
+                <div class="live-indicator">
+                    <span class="pulse-dot"></span> LIVE TRACE
+                </div>
+                <div class="dash-titles">
+                    <h2 id="live-subject">Subject</h2>
+                    <p id="live-topic">Topic</p>
+                </div>
+                <button class="icon-btn danger-btn" onclick="endSession()"><i data-lucide="power"></i></button>
+            </div>
+        </header>
+
+        <main class="content-scroll">
+            <section id="view-home" class="view-container active">
+                <div class="hero-banner">
+                    <div class="hero-glass">
+                        <h1>Classroom intelligence, <br>simplified.</h1>
+                        <button class="hero-fab" onclick="openStartSheet()">
+                            <i data-lucide="play" fill="currentColor"></i>
+                        </button>
+                    </div>
+                    <div class="hero-bg-glow"></div>
+                </div>
+
+                <h3 class="section-label">Overview</h3>
+                <div class="stats-row">
+                    <div class="stat-glass-card">
+                        <div class="stat-icon purple"><i data-lucide="trending-up"></i></div>
+                        <span class="stat-val">92%</span>
+                        <span class="stat-label">Wkly Eng.</span>
+                    </div>
+                    <div class="stat-glass-card">
+                        <div class="stat-icon blue"><i data-lucide="clock"></i></div>
+                        <span class="stat-val">14h</span>
+                        <span class="stat-label">Tracked</span>
+                    </div>
+                </div>
+
+                <h3 class="section-label">Recent Sessions</h3>
+                <div class="session-list">
+                    <div class="session-item">
+                        <div class="session-icon mat"><i data-lucide="calculator"></i></div>
+                        <div class="session-info">
+                            <h4>Algebra II</h4>
+                            <p>Class 10A &bull Yesterday</p>
+                        </div>
+                        <div class="session-score high">88%</div>
+                    </div>
+                    <div class="session-item">
+                        <div class="session-icon lit"><i data-lucide="book-open"></i></div>
+                        <div class="session-info">
+                            <h4>World Lit.</h4>
+                            <p>Class 11B &bull Mon</p>
+                        </div>
+                        <div class="session-score med">76%</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-dashboard" class="view-container">
+                <div id="dash-skeleton" class="skeleton-container active">
+                    <div class="sk-box sk-map"></div>
+                    <div class="sk-row"><div class="sk-box sk-stat"></div><div class="sk-box sk-stat"></div></div>
+                    <div class="sk-box sk-chart"></div>
+                </div>
+
+                <div id="dash-real-content" style="display: none;">
+                    <div class="glass-panel heatmap-panel">
+                        <div class="panel-header">
+                            <h3>Engagement Heatmap</h3>
+                            <i data-lucide="info" size="16" class="info-icon"></i>
+                        </div>
+                        <div class="heatmap-grid" id="classroomGrid">
+                        </div>
+                        <div class="heatmap-legend">
+                            <span><span class="dot-leg high"></span>High Focus</span>
+                            <span><span class="dot-leg med"></span>Wandering</span>
+                            <span><span class="dot-leg low"></span>Disengaged</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel chart-panel">
+                        <h3>Trend Analysis</h3>
+                        <div class="chart-container">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel ai-panel">
+                        <div class="ai-header">
+                            <i data-lucide="sparkles"></i> AI Copilot Insights
+                        </div>
+                        <div id="aiSuggestions" class="ai-stream">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div class="sheet-modal-overlay" id="startSheetModal" onclick="closeStartSheet(event)">
+            <div class="sheet-modal">
+                <div class="sheet-handle"></div>
+                <div class="sheet-header">
+                    <h2>New Session</h2>
+                    <button class="close-sheet-btn" onclick="closeStartSheet()"><i data-lucide="x"></i></button>
+                </div>
+                <form id="startForm" onsubmit="handleStart(event)">
+                    <div class="input-group">
+                        <i data-lucide="library" class="input-icon"></i>
+                        <select id="inpSubject" required>
+                            <option value="" disabled selected>Select Subject</option>
+                            <option>Mathematics</option>
+                            <option>Science</option>
+                            <option>History</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i data-lucide="users" class="input-icon"></i>
+                        <select id="inpClass" required>
+                            <option value="" disabled selected>Select Class</option>
+                            <option>Class 9-A</option>
+                            <option>Class 10-B</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i data-lucide="type" class="input-icon"></i>
+                        <input type="text" id="inpTopic" placeholder="Topic (e.g., Quadratic Equations)" required>
+                    </div>
+
+                    <div class="switch-group glass-switch">
+                        <div class="switch-label">
+                            <i data-lucide="mic-vocal" class="purple-icon"></i>
+                            <div>
+                                <h4>Voice Analysis</h4>
+                                <p>Use AI to track pacing & tone</p>
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="main-fab-btn">
+                        Start Monitoring <i data-lucide="arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <nav class="bottom-nav-glass">
+            <button class="nav-item active" onclick="navTo('view-home')">
+                <i data-lucide="layout-grid"></i>
+            </button>
+            <button class="nav-item nav-center" onclick="openStartSheet()">
+                <div class="center-btn-inner">
+                    <i data-lucide="plus"></i>
+                </div>
+            </button>
+            <button class="nav-item" onclick="navTo('view-dashboard')">
+                <i data-lucide="activity"></i>
+            </button>
+        </nav>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script>
+    window.initialSessionActive = {{ active_session|tojson }};
+    </script>
+</body>
+</html>
