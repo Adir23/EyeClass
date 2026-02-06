@@ -3,173 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Eyeclass Ultra</title>
+    <title>EyeClass</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
     <div class="phone-frame">
-        <div class="status-bar">
-            <span class="time">9:41</span>
-            <div class="status-icons">
-                <i data-lucide="signal" size="14"></i>
-                <i data-lucide="wifi" size="14"></i>
-                <i data-lucide="battery-full" size="14" class="battery-icon"></i>
-            </div>
-        </div>
-
-        <header class="app-header" id="mainHeader">
-            <div class="header-content home-header active">
-                <div class="avatar-container">
-                    <img src="https://i.pravatar.cc/100?img=5" alt="User" class="avatar-img">
-                    <div class="online-status"></div>
+        <header class="app-header">
+            <div class="header-row" id="homeHeader">
+                <div class="user-greeting">
+                    <p>Good Morning,</p>
+                    <h1>Sarah</h1>
                 </div>
-                <div class="header-text">
-                    <span class="greeting">Welcome back,</span>
-                    <span class="username">Sarah V.</span>
+                <div class="avatar">
+                    <img src="https://i.pravatar.cc/100?img=5" alt="User">
                 </div>
-                <button class="icon-btn notification-btn"><i data-lucide="bell-ring"></i><span class="notif-dot"></span></button>
             </div>
 
-            <div class="header-content dash-header">
-                <div class="live-indicator">
-                    <span class="pulse-dot"></span> LIVE TRACE
+            <div class="header-row" id="dashHeader" style="display:none;">
+                <div class="user-greeting">
+                    <p style="color:var(--status-red); display:flex; align-items:center; gap:6px;">
+                        <span style="width:8px; height:8px; background:var(--status-red); border-radius:50%;"></span> LIVE
+                    </p>
+                    <h1 id="liveSubjectTitle">Math</h1>
                 </div>
-                <div class="dash-titles">
-                    <h2 id="live-subject">Subject</h2>
-                    <p id="live-topic">Topic</p>
-                </div>
-                <button class="icon-btn danger-btn" onclick="endSession()"><i data-lucide="power"></i></button>
+                <button onclick="endSession()" style="background:white; border:none; width:40px; height:40px; border-radius:50%; color:var(--status-red); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                    <i data-lucide="power" size="20"></i>
+                </button>
             </div>
         </header>
 
-        <main class="content-scroll">
-            <section id="view-home" class="view-container active">
-                <div class="hero-banner">
-                    <div class="hero-glass">
-                        <h1>Classroom intelligence, <br>simplified.</h1>
-                        <button class="hero-fab" onclick="openStartSheet()">
-                            <i data-lucide="play" fill="currentColor"></i>
-                        </button>
+        <main class="main-content">
+
+            <section id="view-home" class="view-section active">
+
+                <div class="hero-card" id="statusCard">
                     </div>
-                    <div class="hero-bg-glow"></div>
+
+                <div class="section-header">
+                    <span class="section-title">Overview</span>
+                    <button class="small-btn">
+                        <i data-lucide="bar-chart" size="12"></i> Weekly Analysis
+                    </button>
                 </div>
 
-                <h3 class="section-label">Overview</h3>
-                <div class="stats-row">
-                    <div class="stat-glass-card">
-                        <div class="stat-icon purple"><i data-lucide="trending-up"></i></div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon-circle purple"><i data-lucide="trending-up" size="20"></i></div>
                         <span class="stat-val">92%</span>
-                        <span class="stat-label">Wkly Eng.</span>
+                        <span class="stat-label">Engagement</span>
                     </div>
-                    <div class="stat-glass-card">
-                        <div class="stat-icon blue"><i data-lucide="clock"></i></div>
+                    <div class="stat-item">
+                        <div class="stat-icon-circle blue"><i data-lucide="clock" size="20"></i></div>
                         <span class="stat-val">14h</span>
                         <span class="stat-label">Tracked</span>
                     </div>
                 </div>
 
-                <h3 class="section-label">Recent Sessions</h3>
-                <div class="session-list">
-                    <div class="session-item">
-                        <div class="session-icon mat"><i data-lucide="calculator"></i></div>
-                        <div class="session-info">
-                            <h4>Algebra II</h4>
-                            <p>Class 10A &bull Yesterday</p>
+                <div class="section-header">
+                    <span class="section-title">Recent Sessions</span>
+                    <span style="font-size:12px; color:var(--text-secondary);">View All</span>
+                </div>
+
+                <div class="recent-list" id="recentSessionList">
+                    <div class="session-item" onclick="loadSimulation(1)">
+                        <div style="display:flex; align-items:center;">
+                            <div class="session-icon"><i data-lucide="calculator"></i></div>
+                            <div>
+                                <h4 style="margin:0; font-size:15px; color:var(--text-main);">Algebra II</h4>
+                                <p style="margin:2px 0 0; font-size:12px; color:var(--text-secondary);">Class 10-A • 09:30 AM</p>
+                            </div>
                         </div>
-                        <div class="session-score high">88%</div>
+                        <div style="text-align:right;">
+                            <span style="color:var(--status-green); font-weight:800; font-size:15px;">88%</span>
+                            <p style="margin:0; font-size:11px; color:#999;">Yesterday</p>
+                        </div>
                     </div>
-                    <div class="session-item">
-                        <div class="session-icon lit"><i data-lucide="book-open"></i></div>
-                        <div class="session-info">
-                            <h4>World Lit.</h4>
-                            <p>Class 11B &bull Mon</p>
+
+                    <div class="session-item" onclick="loadSimulation(2)">
+                        <div style="display:flex; align-items:center;">
+                            <div class="session-icon"><i data-lucide="book-open"></i></div>
+                            <div>
+                                <h4 style="margin:0; font-size:15px; color:var(--text-main);">Literature</h4>
+                                <p style="margin:2px 0 0; font-size:12px; color:var(--text-secondary);">Class 9-B • 11:15 AM</p>
+                            </div>
                         </div>
-                        <div class="session-score med">76%</div>
+                        <div style="text-align:right;">
+                            <span style="color:var(--status-yellow); font-weight:800; font-size:15px;">74%</span>
+                            <p style="margin:0; font-size:11px; color:#999;">Oct 24</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section id="view-dashboard" class="view-container">
-                <div id="dash-skeleton" class="skeleton-container active">
-                    <div class="sk-box sk-map"></div>
-                    <div class="sk-row"><div class="sk-box sk-stat"></div><div class="sk-box sk-stat"></div></div>
-                    <div class="sk-box sk-chart"></div>
+            <section id="view-dashboard" class="view-section">
+
+                <div class="heatmap-container">
+                    <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <h4 style="color:var(--text-secondary); font-size:14px;">Class Map</h4>
+                        <i data-lucide="users" size="16" style="color:var(--accent);"></i>
+                    </div>
+                    <div class="heatmap-grid" id="classroomGrid"></div>
                 </div>
 
-                <div id="dash-real-content" style="display: none;">
-                    <div class="glass-panel heatmap-panel">
-                        <div class="panel-header">
-                            <h3>Engagement Heatmap</h3>
-                            <i data-lucide="info" size="16" class="info-icon"></i>
-                        </div>
-                        <div class="heatmap-grid" id="classroomGrid">
-                        </div>
-                        <div class="heatmap-legend">
-                            <span><span class="dot-leg high"></span>High Focus</span>
-                            <span><span class="dot-leg med"></span>Wandering</span>
-                            <span><span class="dot-leg low"></span>Disengaged</span>
-                        </div>
+                <div class="graph-card">
+                    <h4 style="color:var(--text-secondary); font-size:14px; margin-bottom:10px;">Engagement Trend</h4>
+                    <div style="flex:1; width:100%; position:relative;">
+                        <canvas id="lineChart"></canvas>
                     </div>
+                </div>
 
-                    <div class="glass-panel chart-panel">
-                        <h3>Trend Analysis</h3>
-                        <div class="chart-container">
-                            <canvas id="lineChart"></canvas>
+                <div class="card">
+                    <h4 style="color:var(--text-secondary); font-size:14px; margin-bottom:12px;">AI Insights</h4>
+                    <div id="aiSuggestionsList" style="display:flex; flex-direction:column; gap:10px;">
                         </div>
-                    </div>
-
-                    <div class="glass-panel ai-panel">
-                        <div class="ai-header">
-                            <i data-lucide="sparkles"></i> AI Copilot Insights
-                        </div>
-                        <div id="aiSuggestions" class="ai-stream">
-                        </div>
-                    </div>
                 </div>
             </section>
         </main>
 
-        <div class="sheet-modal-overlay" id="startSheetModal" onclick="closeStartSheet(event)">
-            <div class="sheet-modal">
-                <div class="sheet-handle"></div>
-                <div class="sheet-header">
-                    <h2>New Session</h2>
-                    <button class="close-sheet-btn" onclick="closeStartSheet()"><i data-lucide="x"></i></button>
-                </div>
-                <form id="startForm" onsubmit="handleStart(event)">
+        <div class="modal-overlay" id="startModal" onclick="handleOverlayClick(event)">
+            <div class="modal-card">
+                <div class="modal-handle"></div>
+                <h3 style="margin-bottom:5px; font-size:22px; color:var(--text-main);">New Session</h3>
+                <p id="currentDateDisplay" style="margin:0 0 20px 0; color:#999; font-size:13px;">Today, Oct 26 • 10:00 AM</p>
+
+                <form onsubmit="handleStart(event)">
                     <div class="input-group">
-                        <i data-lucide="library" class="input-icon"></i>
-                        <select id="inpSubject" required>
-                            <option value="" disabled selected>Select Subject</option>
+                        <i data-lucide="book" size="20" style="color:var(--accent);"></i>
+                        <select id="inpSubject">
                             <option>Mathematics</option>
-                            <option>Science</option>
                             <option>History</option>
+                            <option>Science</option>
+                            <option>Physics</option>
                         </select>
-                    </div>
-                    <div class="input-group">
-                        <i data-lucide="users" class="input-icon"></i>
-                        <select id="inpClass" required>
-                            <option value="" disabled selected>Select Class</option>
-                            <option>Class 9-A</option>
-                            <option>Class 10-B</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <i data-lucide="type" class="input-icon"></i>
-                        <input type="text" id="inpTopic" placeholder="Topic (e.g., Quadratic Equations)" required>
                     </div>
 
-                    <div class="switch-group glass-switch">
-                        <div class="switch-label">
-                            <i data-lucide="mic-vocal" class="purple-icon"></i>
-                            <div>
-                                <h4>Voice Analysis</h4>
-                                <p>Use AI to track pacing & tone</p>
-                            </div>
+                     <div class="input-group">
+                        <i data-lucide="users" size="20" style="color:var(--accent);"></i>
+                        <select id="inpClass">
+                            <option>Class 9-A</option>
+                            <option>Class 10-B</option>
+                            <option>Class 11-C</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <i data-lucide="type" size="20" style="color:var(--accent);"></i>
+                        <input type="text" id="inpTopic" placeholder="Topic (e.g. Algebra)" required>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div class="toggle-text">
+                            <h4>Voice Analysis</h4>
+                            <p>Use AI to track pacing & tone</p>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked>
@@ -177,31 +165,35 @@
                         </label>
                     </div>
 
-                    <button type="submit" class="main-fab-btn">
-                        Start Monitoring <i data-lucide="arrow-right"></i>
-                    </button>
+                    <button type="submit" class="primary-btn">Start Monitoring</button>
                 </form>
             </div>
         </div>
 
-        <nav class="bottom-nav-glass">
+        <nav class="bottom-nav">
             <button class="nav-item active" onclick="navTo('view-home')">
                 <i data-lucide="layout-grid"></i>
+                <span>Home</span>
             </button>
-            <button class="nav-item nav-center" onclick="openStartSheet()">
-                <div class="center-btn-inner">
-                    <i data-lucide="plus"></i>
-                </div>
+
+            <button class="main-action-btn" id="mainActionBtn" onclick="handleMainAction()">
+                <i data-lucide="plus" size="28"></i>
             </button>
-            <button class="nav-item" onclick="navTo('view-dashboard')">
-                <i data-lucide="activity"></i>
+
+            <button class="nav-item" onclick="alert('Feature coming soon')">
+                <i data-lucide="message-square"></i>
+                <span>Chat</span>
             </button>
         </nav>
+
     </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <script>
-    window.initialSessionActive = {{ active_session|tojson }};
+        window.initialSessionActive = {{ active_session|tojson }};
+        const now = new Date();
+        const options = { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+        document.getElementById('currentDateDisplay').innerText = "Today, " + now.toLocaleDateString('en-US', options);
     </script>
 </body>
 </html>

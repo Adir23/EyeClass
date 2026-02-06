@@ -1,188 +1,229 @@
 lucide.createIcons();
-
-// --- Sheet Modal Logic ---
-function openStartSheet() {
-    const modal = document.getElementById('startSheetModal');
-    modal.classList.add('active');
-    // Prevent body scrolling when modal is open (mobile best practice)
-    document.body.style.overflow = 'hidden';
-}
-
-function closeStartSheet(e) {
-    // Close if clicking overlay OR the close button
-    if (!e || e.target === document.getElementById('startSheetModal') || e.currentTarget.classList.contains('close-sheet-btn')) {
-        document.getElementById('startSheetModal').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-}
+let isLessonActive = false;
+let chartInstance = null;
 
 // --- Navigation Logic ---
 function navTo(viewId) {
-    // 1. Update Views
-    document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
 
-    // 2. Update Header state
-    document.querySelectorAll('.header-content').forEach(el => el.classList.remove('active'));
-    if (viewId === 'view-home') document.querySelector('.home-header').classList.add('active');
-    if (viewId === 'view-dashboard') document.querySelector('.dash-header').classList.add('active');
+    const isDash = viewId === 'view-dashboard';
+    document.getElementById('homeHeader').style.display = isDash ? 'none' : 'flex';
+    document.getElementById('dashHeader').style.display = isDash ? 'flex' : 'none';
 
-    // 3. Update Bottom Nav active state
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-    // Simple check to activate correct nav icon
-    if (viewId.includes('home')) document.querySelector('.nav-item:first-child').classList.add('active');
-    if (viewId.includes('dash')) document.querySelector('.nav-item:last-child').classList.add('active');
+    if(viewId === 'view-home') document.querySelector('.nav-item:first-child').classList.add('active');
 }
 
-// --- App Core Logic ---
+// --- Main Action & Status ---
+function handleMainAction() {
+    if (isLessonActive) {
+        navTo('view-dashboard');
+    } else {
+        openStartSheet();
+    }
+}
 
+function updateUIState() {
+    const mainBtn = document.getElementById('mainActionBtn');
+    const statusCard = document.getElementById('statusCard');
+    const recentList = document.getElementById('recentSessionList');
+
+    if (isLessonActive) {
+        // Active State (Warm Red Gradient)
+        mainBtn.classList.add('active-session');
+        mainBtn.innerHTML = '<i data-lucide="activity"></i>';
+
+        if(recentList) recentList.classList.add('disabled-area');
+
+        statusCard.style.background = 'linear-gradient(135deg, #FCA5A5 0%, #E11D48 100%)';
+        statusCard.innerHTML = `
+            <div>
+                <h2>Lesson in Progress</h2>
+                <p>Tracking engagement live...</p>
+            </div>
+            <button class="hero-btn" onclick="navTo('view-dashboard')">
+                <i data-lucide="bar-chart-2" size="16"></i> 
+                <span>View Dashboard</span>
+            </button>
+        `;
+    } else {
+        // Idle State (Gentle Silky Purple)
+        mainBtn.classList.remove('active-session');
+        mainBtn.innerHTML = '<i data-lucide="plus" size="28"></i>';
+
+        if(recentList) recentList.classList.remove('disabled-area');
+
+        statusCard.style.background = 'linear-gradient(135deg, #C4B5FD 0%, #8B5CF6 100%)';
+        statusCard.innerHTML = `
+            <div>
+                <h2>Ready to Teach?</h2>
+                <p>Start a new session now.</p>
+            </div>
+            <button class="hero-btn" onclick="openStartSheet()">
+                <i data-lucide="play" size="16"></i> 
+                <span>Start Lesson</span>
+            </button>
+        `;
+    }
+    lucide.createIcons();
+}
+
+// --- Modal Logic ---
+function openStartSheet() { document.getElementById('startModal').classList.add('active'); }
+function closeStartSheet() { document.getElementById('startModal').classList.remove('active'); }
+
+function handleOverlayClick(e) {
+    if (e.target.id === 'startModal') {
+        closeStartSheet();
+    }
+}
+
+// --- Simulation Logic ---
+function loadSimulation(id) {
+    if(isLessonActive) {
+        alert("Please end the active lesson to view history.");
+        return;
+    }
+    const subject = id === 1 ? "Algebra II" : "Literature";
+    document.getElementById('liveSubjectTitle').innerText = subject;
+    navTo('view-dashboard');
+    // Load static data once (isStatic = true)
+    loadDashboardData(true);
+}
+
+// --- API Calls ---
 async function handleStart(e) {
     e.preventDefault();
-    // Use the new button styling for loading state
-    const btn = e.target.querySelector('button[type="submit"]');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i> Starting...';
-    lucide.createIcons();
-
     const subject = document.getElementById('inpSubject').value;
-    const classVal = document.getElementById('inpClass').value;
     const topic = document.getElementById('inpTopic').value;
 
     await fetch('/api/start_lesson', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject, class_name: classVal, topic })
+        body: JSON.stringify({ subject, topic })
     });
 
+    isLessonActive = true;
+    document.getElementById('liveSubjectTitle').innerText = subject;
+
     closeStartSheet();
-    // Reset button
-    btn.innerHTML = originalText;
+    updateUIState();
     navTo('view-dashboard');
-    // Trigger skeleton and load
     loadDashboardData();
 }
 
-let isFetching = false;
-async function loadDashboardData() {
-    if (isFetching) return;
-    isFetching = true;
-
-    // Show skeleton, hide real content
-    document.getElementById('dash-skeleton').classList.add('active');
-    document.getElementById('dash-real-content').style.display = 'none';
-
-    try {
-        const res = await fetch('/api/get_dashboard_data');
-        if (!res.ok) throw new Error("No session");
-
-        const json = await res.json();
-        renderDashboard(json);
-        // Hide skeleton, show content with a slight delay for smoothness
-        setTimeout(() => {
-            document.getElementById('dash-skeleton').classList.remove('active');
-            // Use CSS animation to fade real content in
-            const realContent = document.getElementById('dash-real-content');
-            realContent.style.display = 'block';
-            realContent.style.animation = 'fadeIn 0.5s ease';
-        }, 600);
-
-    } catch (e) {
-        console.log("No active session or error fetching");
+async function endSession() {
+    if(confirm("End current session?")) {
+        await fetch('/api/end_lesson', { method: 'POST' });
+        isLessonActive = false;
+        updateUIState();
         navTo('view-home');
-    } finally {
-        isFetching = false;
     }
 }
 
-function renderDashboard(json) {
-    const { data, meta } = json;
-    document.getElementById('live-subject').innerText = meta.subject;
-    document.getElementById('live-topic').innerText = meta.topic;
+// --- Dashboard Logic ---
+async function loadDashboardData(isStatic = false) {
+    try {
+        // If isStatic is true, append ?history=true query param
+        const url = isStatic ? '/api/get_dashboard_data?history=true' : '/api/get_dashboard_data';
 
-    // Render Heatmap Grid
+        const res = await fetch(url);
+        const json = await res.json();
+
+        renderHeatmap(json.data.blocks.slice(0, 6));
+        renderChart(json.data.attention_time);
+        renderAISuggestions(json.data.suggestions);
+
+        // Only loop if active and NOT static
+        if(isLessonActive && !isStatic) {
+            setTimeout(loadDashboardData, 3000);
+        }
+    } catch(e) { console.error(e); }
+}
+
+function renderHeatmap(blocks) {
     const grid = document.getElementById('classroomGrid');
     grid.innerHTML = '';
-    data.blocks.forEach(block => {
+    blocks.forEach(block => {
         const div = document.createElement('div');
-        // Determine color based on attention
         const type = block.attention > 75 ? 'high' : block.attention > 45 ? 'med' : 'low';
-        div.className = `heat-spot ${type}`;
-        // Use restlessness to adjust breathing speed dynamically (advanced)
-        const breathSpeed = (3 - (block.restlessness / 50)).toFixed(1) + 's';
-        div.style.setProperty('--animate-duration', breathSpeed);
+        div.className = `heat-circle ${type}`;
+        div.setAttribute('data-val', block.attention);
         grid.appendChild(div);
     });
-
-    renderAdvancedChart(data.attention_time);
-
-    // Render AI Stream
-    const aiContainer = document.getElementById('aiSuggestions');
-    // Don't clear, just prepend new ones for a "stream" feel
-    if (data.suggestions.length > 0) {
-        const latestSuggestion = data.suggestions[0]; // Just take the first for demo
-        const bubble = document.createElement('div');
-        bubble.className = 'ai-bubble';
-        bubble.innerText = latestSuggestion;
-        aiContainer.prepend(bubble);
-        // Keep stream short
-        if (aiContainer.children.length > 3) aiContainer.lastChild.remove();
-    }
 }
 
-async function endSession() {
-    // Use native confirm dialog for speed
-    if (confirm("End live tracking session?")) {
-        await fetch('/api/end_lesson', { method: 'POST' });
-        navTo('view-home');
-    }
+function renderAISuggestions(suggestions) {
+    const list = document.getElementById('aiSuggestionsList');
+    list.innerHTML = '';
+    const safeSuggestions = suggestions.length ? suggestions : ["Front row needs attention.", "Great pacing so far!"];
+
+    safeSuggestions.slice(0, 5).forEach(text => {
+        const item = document.createElement('div');
+        item.style.cssText = "display:flex; gap:10px; background:#F5F3FF; padding:12px; border-radius:12px; font-size:13px; color:#2E1065;";
+        item.innerHTML = `<i data-lucide="sparkles" size="16" style="min-width:16px; color:#7C3AED;"></i> <span>${text}</span>`;
+        list.appendChild(item);
+    });
+    lucide.createIcons();
 }
 
-let chartInstance = null;
-function renderAdvancedChart(dataPoints) {
+function renderChart(dataPoints) {
     const ctx = document.getElementById('lineChart').getContext('2d');
-    if (chartInstance) chartInstance.destroy();
+    if (chartInstance) {
+        chartInstance.data.datasets[0].data = dataPoints;
+        chartInstance.update();
+        return;
+    }
 
-    // Create a cool gradient for the chart fill
-    let gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.5)'); // Purple
-    gradient.addColorStop(1, 'rgba(6, 182, 212, 0.05)'); // Cyan
+    let gradient = ctx.createLinearGradient(0, 0, 0, 150);
+    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.4)');
+    gradient.addColorStop(1, 'rgba(124, 58, 237, 0.0)');
 
     chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['10m', '15m', '20m', '25m', '30m', '35m', '40m', 'Now'],
+            labels: ['10m', '15m', '20m', '25m', '30m', 'Now'],
             datasets: [{
                 data: dataPoints,
-                borderColor: '#7c3aed',
-                borderWidth: 3,
+                borderColor: '#7C3AED',
+                borderWidth: 2,
                 backgroundColor: gradient,
                 fill: true,
-                tension: 0.4, // Smooth curves
-                pointRadius: 4,
+                pointRadius: 5,
                 pointBackgroundColor: '#fff',
-                pointBorderColor: '#7c3aed',
-                pointBorderWidth: 2
+                pointBorderColor: '#7C3AED',
+                pointBorderWidth: 2,
+                tension: 0.4
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            layout: { padding: { left: -10, bottom: 0, top: 10, right: 10 } },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
             scales: {
-                x: { grid: { display: false, drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 11 } } },
-                y: { min: 40, max: 100, grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 20 } }
+                x: { display: false },
+                y: { display: false, min: 20, max: 100 }
             },
             animation: {
-                y: { duration: 1000, easing: 'easeOutQuart' }
+                duration: 1000
             }
         }
     });
 }
 
-// Init: Check server-injected state
+// Init
 if (window.initialSessionActive) {
-    navTo('view-dashboard');
+    isLessonActive = true;
+    updateUIState();
     loadDashboardData();
 } else {
-    navTo('view-home');
+    updateUIState();
 }
