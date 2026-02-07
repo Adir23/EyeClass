@@ -139,43 +139,90 @@ body {
     margin-right: 15px;
 }
 
-/* Dashboard Elements */
+/* --- Dashboard Elements - Compact Layout --- */
+
 .heatmap-container {
-    display: flex; flex-direction: column; align-items: center; gap: 10px;
-    background: white; padding: 15px; border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 15px; /* Reduced padding to save space */
+    border-radius: 24px;
     box-shadow: var(--shadow-soft);
+
+    /* Reduced margin to prevent scrolling */
+    margin-bottom: 12px;
 }
+
 .heatmap-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
-    width: 100%; justify-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    justify-items: center;
 }
+
 .heat-circle {
-    width: 60px; height: 60px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; cursor: pointer; transition: transform 0.2s;
+    width: 100%;
+    max-width: 60px; /* Slightly smaller */
+    aspect-ratio: 1/1;
+    border-radius: 50%; /* Back to Circles */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
 .heat-circle.high { background: linear-gradient(135deg, #6EE7B7 0%, #34D399 100%); }
 .heat-circle.med { background: linear-gradient(135deg, #FCD34D 0%, #FBBF24 100%); }
 .heat-circle.low { background: linear-gradient(135deg, #FCA5A5 0%, #F87171 100%); }
 
 .heat-circle:hover::after {
-    content: attr(data-val) "%"; position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; background: rgba(0,0,0,0.6); color: white;
-    font-weight: bold; font-size: 14px;
+    content: attr(data-val) "%";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Circle tooltip */
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .graph-card {
-    background: white; padding: 20px 15px; border-radius: 20px;
-    box-shadow: var(--shadow-soft); height: 180px;
-    display: flex; flex-direction: column; overflow: hidden;
+    background: white;
+    padding: 15px;
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    height: 180px; /* Reduced height to fit screen */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    /* Reduced margin */
+    margin-bottom: 12px;
 }
 
 .card {
-    background: var(--card-bg); border-radius: var(--radius-l);
-    padding: 20px; box-shadow: var(--shadow-soft);
-    display: flex; flex-direction: column;
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 15px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+
+    /* Reduced margin */
+    margin-bottom: 12px;
+
+    /* Ensure it doesn't push off screen */
+    flex: 1;
+    min-height: 0;
 }
 
 /* Modal */

@@ -24,12 +24,12 @@
 
             <div class="header-row" id="dashHeader" style="display:none;">
                 <div class="user-greeting">
-                    <p style="color:var(--status-red); display:flex; align-items:center; gap:6px;">
+                    <p id="liveIndicator" style="color:var(--status-red); display:flex; align-items:center; gap:6px;">
                         <span style="width:8px; height:8px; background:var(--status-red); border-radius:50%;"></span> LIVE
                     </p>
                     <h1 id="liveSubjectTitle">Math</h1>
                 </div>
-                <button onclick="endSession()" style="background:white; border:none; width:40px; height:40px; border-radius:50%; color:var(--status-red); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                <button id="powerBtn" onclick="endSession()" style="background:white; border:none; width:40px; height:40px; border-radius:50%; color:var(--status-red); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
                     <i data-lucide="power" size="20"></i>
                 </button>
             </div>

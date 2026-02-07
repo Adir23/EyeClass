@@ -2,22 +2,21 @@ lucide.createIcons();
 let isLessonActive = false;
 let chartInstance = null;
 
-// Weekly Graph Carousel Logic
+// Global variables for Weekly Graphs
 let weeklyCharts = [];
 let currentGraphIndex = 0;
-const graphTitles = ["Engagement", "Subjects", "Skills Analysis"];
+const graphTitles = ["Engagement (Vs Last Week)", "Subjects (Vs Last Week)", "Skills Analysis"];
 
 // --- Navigation Logic ---
 let originalNavTo = function(viewId) {
     document.querySelectorAll('.view-section').forEach(el => {
         el.classList.remove('active');
-        if(el.id !== viewId) el.style.display = 'none'; // Ensure hidden
+        if(el.id !== viewId) el.style.display = 'none';
     });
 
     const target = document.getElementById(viewId);
     if (target) {
         target.style.display = (viewId === 'view-weekly') ? 'flex' : 'block';
-        // Small delay to allow display change to register before opacity anim
         setTimeout(() => target.classList.add('active'), 10);
     }
 
@@ -133,12 +132,10 @@ function switchWeeklyTab(tabId, btn) {
 
     const target = document.getElementById(tabId);
     if(target) {
-        // Use flex for graphs to handle height properly
         target.style.display = tabId === 'tab-graphs' ? 'flex' : 'block';
 
         if(tabId === 'tab-insights') loadWeeklyInsights();
         if(tabId === 'tab-graphs') {
-            // Force redraw/resize of charts when becoming visible
             setTimeout(() => {
                 initWeeklyGraphs();
                 weeklyCharts.forEach(c => c?.resize());
@@ -148,7 +145,7 @@ function switchWeeklyTab(tabId, btn) {
     lucide.createIcons();
 }
 
-// --- Graph Carousel Logic (NEW & FIXED) ---
+// --- Graph Carousel Logic ---
 function initWeeklyGraphs() {
     if (weeklyCharts.length > 0) return;
 
@@ -158,7 +155,7 @@ function initWeeklyGraphs() {
 
     if (!ctx1 || !ctx2 || !ctx3) return;
 
-    // Graph 1: Engagement (Comparison Line)
+    // Graph 1: Engagement (Comparison)
     weeklyCharts[0] = new Chart(ctx1, {
         type: 'line',
         data: {
@@ -171,7 +168,7 @@ function initWeeklyGraphs() {
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 10 } } }, scales: { x: { grid: { display: false } }, y: { display: false, min: 60 } } }
     });
 
-    // Graph 2: Subjects (Comparison Bar - Grouped)
+    // Graph 2: Subjects (Comparison Bar)
     weeklyCharts[1] = new Chart(ctx2, {
         type: 'bar',
         data: {
@@ -235,16 +232,173 @@ async function loadWeeklyInsights() {
     } catch(e) { container.innerHTML = '<p>Unavailable.</p>'; }
 }
 
+// --- MAIN DASHBOARD LOGIC (The Fix for the Error) ---
+
+async function loadDashboardData(isStatic = false) {
+    const aiBox = document.getElementById('aiSuggestionsList');
+    const grid = document.getElementById('classroomGrid');
+
+    try {
+        const url = isStatic ? '/api/get_dashboard_data?history=true' : '/api/get_dashboard_data';
+        const res = await fetch(url);
+
+        if (!res.ok) { throw new Error(`Server Error: ${res.status}`); }
+
+        const json = await res.json();
+
+        // Check if Chart.js loaded
+        if (typeof Chart === 'undefined') {
+            throw new Error("No Internet: Chart.js failed to load.");
+        }
+
+        // Call the helper functions (defined below)
+        renderHeatmap(json.data.blocks.slice(0, 6));
+        renderChart(json.data.attention_time);
+        renderAISuggestions(json.data.suggestions);
+
+        if(isLessonActive && !isStatic) setTimeout(loadDashboardData, 3000);
+
+    } catch(e) {
+        console.error(e);
+        if(aiBox) {
+            aiBox.innerHTML = `<div style="color:red;padding:10px;text-align:center;">⚠️ Error:<br>${e.message}</div>`;
+        }
+    }
+}
+
+// --- HELPER FUNCTIONS (These were missing!) ---
+
+function renderHeatmap(blocks) {
+    const grid = document.getElementById('classroomGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    blocks.forEach(block => {
+        const div = document.createElement('div');
+        const type = block.attention > 75 ? 'high' : block.attention > 45 ? 'med' : 'low';
+        div.className = `heat-circle ${type}`;
+        div.setAttribute('data-val', block.attention);
+        grid.appendChild(div);
+    });
+}
+
+function renderAISuggestions(suggestions) {
+    const list = document.getElementById('aiSuggestionsList');
+    if(!list) return;
+    list.innerHTML = '';
+    const safeSuggestions = suggestions.length ? suggestions : ["Front row needs attention.", "Great pacing!"];
+    safeSuggestions.slice(0, 5).forEach(text => {
+        const item = document.createElement('div');
+        item.style.cssText = "display:flex; gap:10px; background:#F5F3FF; padding:12px; border-radius:12px; font-size:13px; color:#2E1065;";
+        item.innerHTML = `<i data-lucide="sparkles" size="16" style="min-width:16px; color:#7C3AED;"></i> <span>${text}</span>`;
+        list.appendChild(item);
+    });
+    lucide.createIcons();
+}
+
+function renderChart(dataPoints) {
+    const ctx = document.getElementById('lineChart');
+    if(!ctx) return;
+
+    if (chartInstance) {
+        chartInstance.data.datasets[0].data = dataPoints;
+        chartInstance.update();
+        return;
+    }
+    const context = ctx.getContext('2d');
+    let gradient = context.createLinearGradient(0, 0, 0, 150);
+    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.4)');
+    gradient.addColorStop(1, 'rgba(124, 58, 237, 0.0)');
+
+    chartInstance = new Chart(context, {
+        type: 'line',
+        data: {
+            labels: ['10m', '15m', '20m', '25m', '30m', 'Now'],
+            datasets: [{
+                data: dataPoints,
+                borderColor: '#7C3AED',
+                borderWidth: 2,
+                backgroundColor: gradient,
+                fill: true,
+                pointRadius: 5,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#7C3AED',
+                pointBorderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { left: -10, bottom: 0, top: 10, right: 10 } },
+            plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+            scales: { x: { display: false }, y: { display: false, min: 20, max: 100 } },
+            animation: { duration: 1000 }
+        }
+    });
+}
+
 // --- Standard Boilerplate ---
 function openStartSheet() { document.getElementById('startModal').classList.add('active'); }
 function closeStartSheet() { document.getElementById('startModal').classList.remove('active'); }
 function handleOverlayClick(e) { if (e.target.id === 'startModal') closeStartSheet(); }
+
 function loadSimulation(id) {
-    if(isLessonActive) { alert("Please end active lesson."); return; }
-    const t = document.getElementById('liveSubjectTitle'); if(t) t.innerText = id === 1 ? "Algebra II" : "Literature";
-    navTo('view-dashboard'); loadDashboardData(true);
+    if(isLessonActive) { alert("Please end the active lesson first."); return; }
+
+    const subject = id === 1 ? "Algebra II" : "Literature";
+    document.getElementById('liveSubjectTitle').innerText = subject;
+
+    document.getElementById('liveIndicator').style.display = 'none';
+    document.getElementById('powerBtn').style.display = 'none';
+
+    navTo('view-dashboard');
+    loadDashboardData(true);
 }
-async function handleStart(e) { e.preventDefault(); isLessonActive = true; closeStartSheet(); updateUIState(); navTo('view-dashboard'); loadDashboardData(); }
-async function endSession() { if(confirm("End session?")) { await fetch('/api/end_lesson', { method: 'POST' }); isLessonActive = false; updateUIState(); navTo('view-home'); } }
-async function loadDashboardData(isStatic=false) { /* ... same ... */ }
-if (window.initialSessionActive) { isLessonActive = true; updateUIState(); loadDashboardData(); } else { updateUIState(); }
+
+async function handleStart(e) {
+    e.preventDefault();
+    const subject = document.getElementById('inpSubject').value;
+    const topic = document.getElementById('inpTopic').value;
+
+    try {
+        await fetch('/api/start_lesson', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subject, topic })
+        });
+        isLessonActive = true;
+
+        document.getElementById('liveSubjectTitle').innerText = subject;
+
+        document.getElementById('liveIndicator').style.display = 'flex';
+        document.getElementById('powerBtn').style.display = 'flex';
+
+        closeStartSheet();
+        updateUIState();
+        navTo('view-dashboard');
+        loadDashboardData();
+    } catch(err) {
+        console.error("Start error", err);
+    }
+}
+
+async function endSession() {
+    if(confirm("End session?")) {
+        await fetch('/api/end_lesson', { method: 'POST' });
+        isLessonActive = false;
+        updateUIState();
+        navTo('view-home');
+    }
+}
+
+// Init
+if (window.initialSessionActive) {
+    isLessonActive = true;
+    document.getElementById('liveIndicator').style.display = 'flex';
+    document.getElementById('powerBtn').style.display = 'flex';
+
+    updateUIState();
+    loadDashboardData();
+} else {
+    updateUIState();
+}
