@@ -32,11 +32,7 @@ else:
 # --- SMART CACHE SYSTEM ---
 ai_cache = {
     "last_update": 0,
-    "suggestions": [
-        "Analyzing classroom dynamics...",
-        "Waiting for more data points...",
-        "AI insights will appear shortly."
-    ]
+    "suggestions": ["Analyzing...", "Waiting for data...", "Insights coming soon."]
 }
 AI_UPDATE_INTERVAL = 20
 
@@ -44,34 +40,23 @@ AI_UPDATE_INTERVAL = 20
 # --- HELPER FUNCTIONS ---
 
 def generate_ai_insights(stats):
-    """Sends class stats to Gemini and returns 3 short actionable insights."""
-    if not has_ai:
-        return ["⚠️ AI Offline", "Check API Key", "Using manual mode"]
-
+    if not has_ai: return ["⚠️ AI Offline", "Check API Key", "Manual Mode"]
     try:
         prompt = f"""
-        You are an AI assistant for a teacher in a classroom called 'EyeClass'.
-        Analyze this real-time data:
-        - Average Attention: {stats['avg']}%
-        - Max Attention: {stats['max']}%
-        - Min Attention: {stats['min']}%
-        - Subject: {stats['subject']}
+        Teacher Assistant Analysis:
+        - Avg Attention: {stats['avg']}%
         - Topic: {stats['topic']}
-
-        Provide exactly 3 short, punchy, and actionable insights for the teacher (max 10 words each).
-        Return them as a raw JSON list of strings. Example: ["Slow down, confusion detected.", "Great engagement in back row.", "Ask a question to reset focus."]
+        Give 3 short (max 8 words) actionable tips for the teacher right now.
+        Return raw JSON list of strings.
         """
         response = model.generate_content(prompt)
         text = response.text.replace("```json", "").replace("```", "").strip()
         return json.loads(text)
-    except Exception as e:
-        print(f"AI Error: {e}")
+    except:
         return ai_cache["suggestions"]
 
 
 def generate_lesson_data():
-    """Generates the data snapshot (Graphics + AI)"""
-
     blocks = []
     for i in range(25):
         att = random.randint(30, 100)
@@ -80,7 +65,6 @@ def generate_lesson_data():
         blocks.append({"id": i, "attention": att, "restlessness": restless})
 
     avg_att = sum(b['attention'] for b in blocks) // 25
-
     current_time = time.time()
 
     current_stats = {
@@ -92,10 +76,8 @@ def generate_lesson_data():
     }
 
     if current_time - ai_cache["last_update"] > AI_UPDATE_INTERVAL:
-        print("🤖 Fetching fresh insights from Gemini...")
         new_suggestions = generate_ai_insights(current_stats)
-        if new_suggestions:
-            ai_cache["suggestions"] = new_suggestions
+        if new_suggestions: ai_cache["suggestions"] = new_suggestions
         ai_cache["last_update"] = current_time
 
     dummy_data = {
@@ -118,20 +100,9 @@ def generate_lesson_data():
 
 @app.route("/")
 def index():
-    if not os.listdir(JSON_FOLDER):
-        generate_lesson_data()
-
+    if not os.listdir(JSON_FOLDER): generate_lesson_data()
     active_session = all(k in session for k in ["subject", "topic"])
-    initial_data = None
-
-    if active_session:
-        files = sorted([f for f in os.listdir(JSON_FOLDER) if f.endswith(".json")],
-                       key=lambda x: os.path.getmtime(os.path.join(JSON_FOLDER, x)), reverse=True)
-        if files:
-            with open(os.path.join(JSON_FOLDER, files[0]), "r") as f:
-                initial_data = json.load(f)
-
-    return render_template("app_shell.html", active_session=active_session, initial_data=initial_data)
+    return render_template("app_shell.html", active_session=active_session)
 
 
 @app.route("/api/start_lesson", methods=["POST"])
@@ -139,62 +110,65 @@ def start_lesson():
     data = request.json
     session["lesson_topic"] = data.get("topic")
     session["subject"] = data.get("subject")
-    session["start_time"] = time.strftime("%H:%M")
-
-    session["chat_history"] = []
     ai_cache["last_update"] = 0
-
     generate_lesson_data()
     return jsonify({"status": "success"})
 
 
 @app.route("/api/get_dashboard_data")
 def get_dashboard_data():
-    is_history = request.args.get('history') == 'true'
-
-    if not is_history:
-        generate_lesson_data()
-
-    files = [f for f in os.listdir(JSON_FOLDER) if f.endswith(".json")]
+    if request.args.get('history') != 'true': generate_lesson_data()
+    files = sorted([f for f in os.listdir(JSON_FOLDER) if f.endswith(".json")],
+                   key=lambda x: os.path.getmtime(os.path.join(JSON_FOLDER, x)), reverse=True)
     if not files: return jsonify({"error": "No data"}), 404
 
-    files.sort(key=lambda x: os.path.getmtime(os.path.join(JSON_FOLDER, x)), reverse=True)
     with open(os.path.join(JSON_FOLDER, files[0]), "r") as f:
         data = json.load(f)
-
-    response = {
-        "meta": {
-            "subject": session.get("subject", "Demo"),
-            "topic": session.get("lesson_topic", "Overview"),
-        },
-        "data": data
-    }
-    return jsonify(response)
+    return jsonify(
+        {"meta": {"subject": session.get("subject", "Demo"), "topic": session.get("lesson_topic", "Overview")},
+         "data": data})
 
 
 @app.route("/api/chat", methods=["POST"])
 def chat_with_ai():
     user_msg = request.json.get("message")
-
-    if not has_ai:
-        time.sleep(1)
-        return jsonify(
-            {"reply": "I am currently in offline mode. Please add a valid Gemini API Key to app.py to chat with me!"})
+    if not has_ai: return jsonify({"reply": "AI is offline."})
 
     history = session.get("chat_history", [])
-    context = f"You are an AI teaching assistant. The teacher is currently teaching {session.get('subject')} - {session.get('lesson_topic')}. Keep answers short and helpful."
-
     try:
         chat = chat_model.start_chat(history=[])
-        response = chat.send_message(f"{context}\nTeacher asks: {user_msg}")
-
+        response = chat.send_message(
+            f"Teacher Assistant Context: Teaching {session.get('subject')}. Keep answers short.\nUser: {user_msg}")
         history.append({"role": "user", "parts": [user_msg]})
         history.append({"role": "model", "parts": [response.text]})
         session["chat_history"] = history[-10:]
-
         return jsonify({"reply": response.text})
+    except:
+        return jsonify({"reply": "AI Connection Error"})
+
+
+# --- NEW: WEEKLY INSIGHTS ENDPOINT ---
+@app.route("/api/weekly_insights")
+def get_weekly_insights():
+    if not has_ai:
+        time.sleep(1)
+        return jsonify({"text": "AI is offline. Please check your API key to see the weekly summary."})
+
+    try:
+        # We simulate sending weekly stats to Gemini
+        prompt = """
+        You are a pedagogical expert. Analyze this teacher's weekly performance:
+        - Average Engagement: 89% (High)
+        - Best Class: 10-A (Math)
+        - Improvement: +5% from last week.
+
+        Write a short, encouraging paragraph (max 40 words) summarizing the week and giving one key takeaway. 
+        Tone: Professional, Warm, Concise.
+        """
+        response = model.generate_content(prompt)
+        return jsonify({"text": response.text.strip()})
     except Exception as e:
-        return jsonify({"reply": "Sorry, I had trouble connecting to the AI brain."})
+        return jsonify({"text": "Could not generate analysis at this moment."})
 
 
 @app.route("/api/end_lesson", methods=["POST"])

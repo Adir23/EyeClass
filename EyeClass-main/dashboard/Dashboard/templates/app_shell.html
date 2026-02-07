@@ -45,11 +45,10 @@
         <main class="main-content">
 
             <section id="view-home" class="view-section active">
-                <div class="hero-card" id="statusCard">
-                    </div>
+                <div class="hero-card" id="statusCard"></div>
                 <div class="section-header">
                     <span class="section-title">Overview</span>
-                    <button class="small-btn"><i data-lucide="bar-chart" size="12"></i> Weekly Analysis</button>
+                    <button class="small-btn" onclick="navTo('view-weekly')"><i data-lucide="bar-chart" size="12"></i> Weekly Analysis</button>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-item">
@@ -107,22 +106,130 @@
             <section id="view-chat" class="view-section" style="padding-bottom: 100px; display:flex; flex-direction:column;">
                 <div class="chat-container" id="chatContainer">
                     <div class="message ai">
-                        <div class="avatar-small">
-                            <i data-lucide="bot" size="16"></i>
-                        </div>
-                        <div class="bubble">
-                            Hello! I'm your teaching assistant. How can I help you improve the lesson?
-                        </div>
+                        <div class="avatar-small"><i data-lucide="bot" size="16"></i></div>
+                        <div class="bubble">Hello! I'm your teaching assistant.</div>
                     </div>
                 </div>
                 <div class="chat-input-wrapper">
-                    <textarea id="chatInput" rows="1" placeholder="Ask Gemini..."
-                              onkeydown="handleEnter(event)"
-                              oninput="autoResize(this)"></textarea>
+                    <textarea id="chatInput" rows="1" placeholder="Ask Gemini..." onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+                    <button class="chat-send-btn" onclick="sendMessage()"><i data-lucide="send" size="18"></i></button>
+                </div>
+            </section>
 
-                    <button class="chat-send-btn" onclick="sendMessage()">
-                        <i data-lucide="send" size="18"></i>
-                    </button>
+            <section id="view-weekly" class="view-section" style="padding: 0; background: var(--bg-app); overflow: hidden; display:flex; flex-direction:column;">
+
+                <div class="weekly-header-container">
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding: 20px 20px 0;">
+                        <button onclick="navTo('view-home')" style="background:white; border:none; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.05); color:var(--text-main);">
+                            <i data-lucide="arrow-left" size="20"></i>
+                        </button>
+                        <h2 style="font-size:18px; color:var(--text-main); font-weight:700;">Weekly Summary</h2>
+                        <div style="width:40px;"></div>
+                    </div>
+
+                    <div class="omega-wrapper">
+                        <svg class="omega-gauge" viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="gradDirect" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#D946EF;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#4F46E5;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="gauge-bg" cx="100" cy="100" r="80"></circle>
+                            <circle class="gauge-fill" id="weeklyProgress" cx="100" cy="100" r="80"></circle>
+                        </svg>
+                        <div class="omega-text">
+                            <span class="omega-score" id="omegaScoreVal">0%</span>
+                            <span class="omega-label">Weekly Score</span>
+                        </div>
+                    </div>
+
+                    <div class="tabs-nav">
+                        <button class="tab-btn active" onclick="switchWeeklyTab('tab-overview', this)">Overview</button>
+                        <button class="tab-btn" onclick="switchWeeklyTab('tab-graphs', this)">Graphs</button>
+                        <button class="tab-btn" onclick="switchWeeklyTab('tab-insights', this)">Insights</button>
+                    </div>
+                </div>
+
+                <div class="weekly-content" style="flex:1; padding: 20px; overflow-y: auto; padding-bottom: 90px;">
+
+                    <div id="tab-overview" class="tab-pane active">
+                        <h4 style="color:var(--text-secondary); font-size:12px; font-weight:700; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Performance Metrics</h4>
+                        <div class="metrics-grid-2x2">
+                            <div class="metric-box">
+                                <div class="metric-icon purple"><i data-lucide="clock" size="18"></i></div>
+                                <span class="metric-val">18h</span>
+                                <span class="metric-lbl">Active Time</span>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-icon blue"><i data-lucide="check-circle" size="18"></i></div>
+                                <span class="metric-val">24</span>
+                                <span class="metric-lbl">Lessons</span>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-icon pink"><i data-lucide="users" size="18"></i></div>
+                                <span class="metric-val">96%</span>
+                                <span class="metric-lbl">Attendance</span>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-icon orange"><i data-lucide="zap" size="18"></i></div>
+                                <span class="metric-val">High</span>
+                                <span class="metric-lbl">Energy</span>
+                            </div>
+                        </div>
+                        <div class="trend-card-gradient">
+                            <div class="trend-icon-square">
+                                <i data-lucide="trending-up" size="20"></i>
+                            </div>
+                            <div class="trend-text">
+                                <h3>Better than last week</h3>
+                                <p>Total engagement +5%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-graphs" class="tab-pane" style="display:none; height:100%; min-height: 320px;">
+
+                        <div class="card graph-carousel-card">
+
+                            <div class="carousel-header">
+                                <button class="icon-btn" onclick="prevGraph()"><i data-lucide="chevron-left"></i></button>
+                                <span class="graph-title" id="carouselTitle">Engagement Trends</span>
+                                <button class="icon-btn" onclick="nextGraph()"><i data-lucide="chevron-right"></i></button>
+                            </div>
+
+                            <div class="carousel-content">
+                                <div class="chart-slide active" id="slide-1">
+                                    <canvas id="chart1"></canvas>
+                                </div>
+                                <div class="chart-slide" id="slide-2">
+                                    <canvas id="chart2"></canvas>
+                                </div>
+                                <div class="chart-slide" id="slide-3">
+                                    <canvas id="chart3"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="carousel-dots">
+                                <div class="dot active" id="dot-1"></div>
+                                <div class="dot" id="dot-2"></div>
+                                <div class="dot" id="dot-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-insights" class="tab-pane" style="display:none;">
+                         <div class="card" style="background:white; border:none; box-shadow:var(--shadow-soft);">
+                            <div style="display:flex; gap:12px; margin-bottom:15px;">
+                                <div class="avatar-small"><i data-lucide="sparkles" size="18"></i></div>
+                                <h4 style="margin:0; align-self:center; color:var(--text-main);">Gemini Analysis</h4>
+                            </div>
+                            <div id="weekly-ai-content">
+                                <p style="color:#94A3B8; font-size:14px;">Generating insights...</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
@@ -133,60 +240,23 @@
                 <div class="modal-handle"></div>
                 <h3 style="margin-bottom:5px; font-size:22px; color:var(--text-main);">New Session</h3>
                 <p id="currentDateDisplay" style="margin:0 0 20px 0; color:#999; font-size:13px;">Today</p>
-
                 <form onsubmit="handleStart(event)">
-                    <div class="input-group">
-                        <i data-lucide="book" size="20" style="color:var(--accent);"></i>
-                        <select id="inpSubject">
-                            <option>Mathematics</option>
-                            <option>History</option>
-                            <option>Science</option>
-                            <option>Physics</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <i data-lucide="users" size="20" style="color:var(--accent);"></i>
-                        <select id="inpClass">
-                            <option>Class 9-A</option>
-                            <option>Class 10-B</option>
-                            <option>Class 11-C</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <i data-lucide="type" size="20" style="color:var(--accent);"></i>
-                        <input type="text" id="inpTopic" placeholder="Topic (e.g. Algebra)" required>
-                    </div>
-
+                    <div class="input-group"><i data-lucide="book" size="20" style="color:var(--accent);"></i><select id="inpSubject"><option>Mathematics</option><option>History</option><option>Science</option></select></div>
+                    <div class="input-group"><i data-lucide="users" size="20" style="color:var(--accent);"></i><select id="inpClass"><option>Class 9-A</option><option>Class 10-B</option></select></div>
+                    <div class="input-group"><i data-lucide="type" size="20" style="color:var(--accent);"></i><input type="text" id="inpTopic" placeholder="Topic" required></div>
                     <div class="toggle-row">
-                        <div class="toggle-text">
-                            <h4>Voice Analysis</h4>
-                            <p>Use AI to track pacing & tone</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" checked>
-                            <span class="slider"></span>
-                        </label>
+                        <div class="toggle-text"><h4>Voice Analysis</h4><p>Use AI to track pacing</p></div>
+                        <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
                     </div>
-
                     <button type="submit" class="primary-btn">Start Monitoring</button>
                 </form>
             </div>
         </div>
 
         <nav class="bottom-nav">
-            <button class="nav-item active" onclick="navTo('view-home')">
-                <i data-lucide="layout-grid"></i>
-                <span>Home</span>
-            </button>
-            <button class="main-action-btn" id="mainActionBtn" onclick="handleMainAction()">
-                <i data-lucide="plus" size="28"></i>
-            </button>
-            <button class="nav-item" onclick="navTo('view-chat')">
-                <i data-lucide="message-square"></i>
-                <span>Chat</span>
-            </button>
+            <button class="nav-item active" onclick="navTo('view-home')"><i data-lucide="layout-grid"></i><span>Home</span></button>
+            <button class="main-action-btn" id="mainActionBtn" onclick="handleMainAction()"><i data-lucide="plus" size="28"></i></button>
+            <button class="nav-item" onclick="navTo('view-chat')"><i data-lucide="message-square"></i><span>Chat</span></button>
         </nav>
 
     </div>
@@ -195,8 +265,7 @@
     <script>
         window.initialSessionActive = {{ active_session|tojson }};
         const now = new Date();
-        const options = { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
-        document.getElementById('currentDateDisplay').innerText = "Today, " + now.toLocaleDateString('en-US', options);
+        document.getElementById('currentDateDisplay').innerText = "Today, " + now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     </script>
 </body>
 </html>
