@@ -1,0 +1,27 @@
+{
+    "timestamp": 1769956591.934381,
+    "date_str": "01/02 16:36",
+    "subject": "History",
+    "topic": "World War II",
+    "mode": "single",
+    "avg_attention": 56,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 56
+        }
+    ],
+    "attention_time": [
+        61,
+        58,
+        55,
+        59,
+        57,
+        55
+    ],
+    "suggestions": [
+        "Check back row engagement.",
+        "Perfect visual aids.",
+        "Great pacing!"
+    ]
+}

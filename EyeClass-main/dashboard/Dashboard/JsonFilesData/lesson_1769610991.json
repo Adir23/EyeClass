@@ -1,0 +1,27 @@
+{
+    "timestamp": 1769610991.936375,
+    "date_str": "28/01 16:36",
+    "subject": "Biology",
+    "topic": "Cell Structure",
+    "mode": "single",
+    "avg_attention": 73,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 73
+        }
+    ],
+    "attention_time": [
+        76,
+        75,
+        73,
+        72,
+        75,
+        76
+    ],
+    "suggestions": [
+        "Check back row engagement.",
+        "Review last concept.",
+        "Ask more questions."
+    ]
+}

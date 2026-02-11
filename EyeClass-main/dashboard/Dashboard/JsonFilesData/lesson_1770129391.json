@@ -1,0 +1,27 @@
+{
+    "timestamp": 1770129391.934381,
+    "date_str": "03/02 16:36",
+    "subject": "Literature",
+    "topic": "Shakespeare",
+    "mode": "single",
+    "avg_attention": 74,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 74
+        }
+    ],
+    "attention_time": [
+        69,
+        69,
+        70,
+        70,
+        78,
+        76
+    ],
+    "suggestions": [
+        "Review last concept.",
+        "Great pacing!",
+        "Perfect visual aids."
+    ]
+}

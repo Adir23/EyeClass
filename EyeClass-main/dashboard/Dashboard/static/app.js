@@ -2,12 +2,10 @@ lucide.createIcons();
 let isLessonActive = false;
 let chartInstance = null;
 
-// Global variables for Weekly Graphs
 let weeklyCharts = [];
 let currentGraphIndex = 0;
-const graphTitles = ["Engagement (Vs Last Week)", "Subjects (Vs Last Week)", "Skills Analysis"];
+const graphTitles = ["Monthly Engagement", "Subject Comparison", "Skill Progress"];
 
-// --- Navigation Logic ---
 let originalNavTo = function(viewId) {
     document.querySelectorAll('.view-section').forEach(el => {
         el.classList.remove('active');
@@ -16,7 +14,7 @@ let originalNavTo = function(viewId) {
 
     const target = document.getElementById(viewId);
     if (target) {
-        target.style.display = (viewId === 'view-weekly') ? 'flex' : 'block';
+        target.style.display = (viewId === 'view-monthly') ? 'flex' : 'block';
         setTimeout(() => target.classList.add('active'), 10);
     }
 
@@ -39,12 +37,11 @@ let originalNavTo = function(viewId) {
 
 function navTo(viewId) {
     originalNavTo(viewId);
-    if(viewId === 'view-weekly') {
+    if(viewId === 'view-monthly') {
         setTimeout(initWeeklyGauge, 100);
     }
 }
 
-// --- Main Action & Status ---
 function handleMainAction() {
     if (isLessonActive) { navTo('view-dashboard'); } else { openStartSheet(); }
 }
@@ -52,243 +49,133 @@ function handleMainAction() {
 function updateUIState() {
     const mainBtn = document.getElementById('mainActionBtn');
     const statusCard = document.getElementById('statusCard');
-    const recentList = document.getElementById('recentSessionList');
+
     if (!mainBtn || !statusCard) return;
 
     if (isLessonActive) {
         mainBtn.classList.add('active-session');
         mainBtn.innerHTML = '<i data-lucide="activity"></i>';
-        if(recentList) recentList.classList.add('disabled-area');
         statusCard.style.background = 'linear-gradient(135deg, #FCA5A5 0%, #E11D48 100%)';
         statusCard.innerHTML = `<div><h2>Lesson in Progress</h2><p>Tracking engagement live...</p></div><button class="hero-btn" onclick="navTo('view-dashboard')"><i data-lucide="bar-chart-2" size="16"></i> <span>View Dashboard</span></button>`;
     } else {
         mainBtn.classList.remove('active-session');
         mainBtn.innerHTML = '<i data-lucide="plus" size="28"></i>';
-        if(recentList) recentList.classList.remove('disabled-area');
         statusCard.style.background = 'linear-gradient(135deg, #C4B5FD 0%, #8B5CF6 100%)';
         statusCard.innerHTML = `<div><h2>Ready to Teach?</h2><p>Start a new session now.</p></div><button class="hero-btn" onclick="openStartSheet()"><i data-lucide="play" size="16"></i> <span>Start Lesson</span></button>`;
     }
     lucide.createIcons();
 }
 
-// --- Chat Logic ---
-function autoResize(textarea) {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
-}
-function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-
-async function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
-    if (!text) return;
-    addMessageToUI(text, 'user');
-    input.value = ''; input.style.height = 'auto';
-    const typingId = addTypingIndicator();
+async function fetchHistory() {
     try {
-        const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ message: text }) });
-        const data = await res.json();
-        removeMessage(typingId);
-        addMessageToUI(data.reply, 'ai');
-    } catch (e) { removeMessage(typingId); addMessageToUI("Connection error.", 'ai'); }
+        const res = await fetch('/api/get_history_list');
+        const list = await res.json();
+        renderHistoryList('recentSessionList', list.slice(0, 3));
+        renderHistoryList('fullHistoryList', list);
+    } catch(e) { console.error("History error", e); }
 }
 
-function addMessageToUI(text, sender) {
-    const container = document.getElementById('chatContainer');
-    const div = document.createElement('div');
-    div.className = `message ${sender}`;
-    div.innerHTML = sender === 'ai' ? `<div class="avatar-small"><i data-lucide="bot" size="16"></i></div><div class="bubble">${text}</div>` : `<div class="bubble">${text}</div>`;
-    container.appendChild(div);
-    lucide.createIcons();
-    container.scrollTop = container.scrollHeight;
-}
-
-function addTypingIndicator() {
-    const container = document.getElementById('chatContainer');
-    const id = 'typing-' + Date.now();
-    const div = document.createElement('div'); div.className = 'message ai'; div.id = id;
-    div.innerHTML = `<div class="avatar-small"><i data-lucide="bot" size="16"></i></div><div class="bubble"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
-    container.appendChild(div); container.scrollTop = container.scrollHeight; lucide.createIcons(); return id;
-}
-function removeMessage(id) { const el = document.getElementById(id); if (el) el.remove(); }
-
-// --- Weekly Report Logic ---
-function initWeeklyGauge() {
-    const scoreEl = document.getElementById('omegaScoreVal');
-    const fill = document.getElementById('weeklyProgress');
-    if(!scoreEl || !fill) return;
-    let score = 0; const target = 92;
-    const interval = setInterval(() => { score++; scoreEl.innerText = score + '%'; if(score >= target) clearInterval(interval); }, 12);
-    setTimeout(() => { fill.style.strokeDashoffset = '30'; }, 100);
-}
-
-function switchWeeklyTab(tabId, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    document.querySelectorAll('.tab-pane').forEach(p => {
-        p.style.display = 'none';
-    });
-
-    const target = document.getElementById(tabId);
-    if(target) {
-        target.style.display = tabId === 'tab-graphs' ? 'flex' : 'block';
-
-        if(tabId === 'tab-insights') loadWeeklyInsights();
-        if(tabId === 'tab-graphs') {
-            setTimeout(() => {
-                initWeeklyGraphs();
-                weeklyCharts.forEach(c => c?.resize());
-            }, 50);
-        }
-    }
-    lucide.createIcons();
-}
-
-// --- Graph Carousel Logic ---
-function initWeeklyGraphs() {
-    if (weeklyCharts.length > 0) return;
-
-    const ctx1 = document.getElementById('chart1')?.getContext('2d');
-    const ctx2 = document.getElementById('chart2')?.getContext('2d');
-    const ctx3 = document.getElementById('chart3')?.getContext('2d');
-
-    if (!ctx1 || !ctx2 || !ctx3) return;
-
-    // Graph 1: Engagement (Comparison)
-    weeklyCharts[0] = new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'],
-            datasets: [
-                { label: 'This Week', data: [82, 85, 88, 92, 94], borderColor: '#7C3AED', backgroundColor: 'rgba(124, 58, 237, 0.1)', borderWidth: 3, tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: 'white' },
-                { label: 'Last Week', data: [75, 78, 76, 80, 82], borderColor: '#CBD5E1', borderWidth: 2, borderDash: [5, 5], tension: 0.4, fill: false, pointRadius: 0 }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 10 } } }, scales: { x: { grid: { display: false } }, y: { display: false, min: 60 } } }
-    });
-
-    // Graph 2: Subjects (Comparison Bar)
-    weeklyCharts[1] = new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: ['Math', 'Phys', 'Hist', 'Eng'],
-            datasets: [
-                { label: 'This Week', data: [92, 85, 76, 88], backgroundColor: '#7C3AED', borderRadius: 4, barPercentage: 0.6 },
-                { label: 'Last Week', data: [88, 80, 78, 85], backgroundColor: '#E2E8F0', borderRadius: 4, barPercentage: 0.6 }
-            ]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 10 } } }, scales: { x: { grid: { display: false } }, y: { display: false, min: 0 } } }
-    });
-
-    // Graph 3: Skills (Radar Comparison)
-    weeklyCharts[2] = new Chart(ctx3, {
-        type: 'radar',
-        data: {
-            labels: ['Pacing', 'Clarity', 'Interact', 'Energy', 'Visuals'],
-            datasets: [
-                { label: 'This Week', data: [90, 85, 95, 80, 88], borderColor: '#7C3AED', backgroundColor: 'rgba(124, 58, 237, 0.2)', borderWidth: 2, pointRadius: 0 },
-                { label: 'Last Week', data: [80, 82, 85, 75, 80], borderColor: '#CBD5E1', backgroundColor: 'transparent', borderWidth: 2, borderDash: [4,4], pointRadius: 0 }
-            ]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 10 } } },
-            scales: { r: { ticks: { display: false }, grid: { color: '#F1F5F9' } } }
-        }
-    });
-}
-
-function nextGraph() {
-    currentGraphIndex = (currentGraphIndex + 1) % 3;
-    updateGraphVisibility();
-}
-
-function prevGraph() {
-    currentGraphIndex = (currentGraphIndex - 1 + 3) % 3;
-    updateGraphVisibility();
-}
-
-function updateGraphVisibility() {
-    document.querySelectorAll('.chart-slide').forEach((el, idx) => {
-        el.style.opacity = idx === currentGraphIndex ? '1' : '0';
-        el.style.pointerEvents = idx === currentGraphIndex ? 'auto' : 'none';
-        el.style.zIndex = idx === currentGraphIndex ? '5' : '1';
-    });
-    document.querySelectorAll('.carousel-dots .dot').forEach((d, i) => {
-        d.classList.toggle('active', i === currentGraphIndex);
-    });
-    document.getElementById('carouselTitle').innerText = graphTitles[currentGraphIndex];
-}
-
-async function loadWeeklyInsights() {
-    const container = document.getElementById('weekly-ai-content');
+function renderHistoryList(containerId, items) {
+    const container = document.getElementById(containerId);
     if(!container) return;
-    container.innerHTML = '<p style="color:#94A3B8; font-size:14px;">Analyzing performance with Gemini...</p>';
-    try {
-        const res = await fetch('/api/weekly_insights');
-        const data = await res.json();
-        container.innerHTML = `<p style="font-size:15px; line-height:1.6; color:#334155;">${data.text}</p>`;
-    } catch(e) { container.innerHTML = '<p>Unavailable.</p>'; }
+    container.innerHTML = '';
+
+    if(items.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#ccc;">No history yet</p>';
+        return;
+    }
+
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'session-item';
+        div.onclick = () => loadSimulation(item.id, item.subject);
+
+        const iconHtml = item.mode === 'single'
+            ? '<i data-lucide="user" size="20"></i>'
+            : '<i data-lucide="users" size="20"></i>';
+
+        div.innerHTML = `
+            <div style="display:flex; align-items:center;">
+                <div class="session-icon">${iconHtml}</div>
+                <div>
+                    <h4 style="margin:0; font-size:15px; color:var(--text-main);">${item.subject}</h4>
+                    <p style="margin:2px 0 0; font-size:12px; color:var(--text-secondary);">${item.date}</p>
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <span style="color:${item.score >= 80 ? 'var(--status-green)' : 'var(--status-yellow)'}; font-weight:800; font-size:15px;">${item.score}%</span>
+                <p style="margin:0; font-size:11px; color:#999;">${item.mode === 'single' ? 'Single' : 'Group'}</p>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+    lucide.createIcons();
 }
 
-// --- MAIN DASHBOARD LOGIC (The Fix for the Error) ---
+function openHistoryModal() { document.getElementById('historyModal').classList.add('active'); }
+function closeHistoryModal() { document.getElementById('historyModal').classList.remove('active'); }
 
-async function loadDashboardData(isStatic = false) {
+async function loadDashboardData(isStatic = false, specificFileId = null) {
     const aiBox = document.getElementById('aiSuggestionsList');
-    const grid = document.getElementById('classroomGrid');
 
     try {
-        const url = isStatic ? '/api/get_dashboard_data?history=true' : '/api/get_dashboard_data';
+        let url = isStatic ? '/api/get_dashboard_data?history=true' : '/api/get_dashboard_data';
+        if (specificFileId) url += `&file_id=${specificFileId}`;
+
         const res = await fetch(url);
-
-        if (!res.ok) { throw new Error(`Server Error: ${res.status}`); }
-
         const json = await res.json();
+        const data = json.data;
 
-        // Check if Chart.js loaded
-        if (typeof Chart === 'undefined') {
-            throw new Error("No Internet: Chart.js failed to load.");
-        }
-
-        // Call the helper functions (defined below)
-        renderHeatmap(json.data.blocks.slice(0, 6));
-        renderChart(json.data.attention_time);
-        renderAISuggestions(json.data.suggestions);
+        renderHeatmap(data.blocks);
+        renderChart(data.attention_time);
+        renderAISuggestions(data.suggestions);
 
         if(isLessonActive && !isStatic) setTimeout(loadDashboardData, 3000);
 
-    } catch(e) {
-        console.error(e);
-        if(aiBox) {
-            aiBox.innerHTML = `<div style="color:red;padding:10px;text-align:center;">⚠️ Error:<br>${e.message}</div>`;
-        }
-    }
+    } catch(e) { console.error(e); }
 }
-
-// --- HELPER FUNCTIONS (These were missing!) ---
 
 function renderHeatmap(blocks) {
     const grid = document.getElementById('classroomGrid');
     if(!grid) return;
     grid.innerHTML = '';
-    blocks.forEach(block => {
+
+    if (blocks.length === 1) {
+        grid.style.display = 'flex';
+        grid.style.justifyContent = 'center';
+        grid.style.alignItems = 'center';
+        grid.style.height = '100%';
+
+        const block = blocks[0];
         const div = document.createElement('div');
         const type = block.attention > 75 ? 'high' : block.attention > 45 ? 'med' : 'low';
-        div.className = `heat-circle ${type}`;
+
+        div.className = `heat-circle single ${type}`;
         div.setAttribute('data-val', block.attention);
+        div.innerHTML = `<span style="font-size:32px; font-weight:800; color:white;">${block.attention}%</span>`;
         grid.appendChild(div);
-    });
+    }
+    else {
+        grid.style.display = 'grid';
+        blocks.forEach(block => {
+            const div = document.createElement('div');
+            const type = block.attention > 75 ? 'high' : block.attention > 45 ? 'med' : 'low';
+            div.className = `heat-circle ${type}`;
+            div.setAttribute('data-val', block.attention);
+            grid.appendChild(div);
+        });
+    }
 }
 
 function renderAISuggestions(suggestions) {
     const list = document.getElementById('aiSuggestionsList');
     if(!list) return;
     list.innerHTML = '';
-    const safeSuggestions = suggestions.length ? suggestions : ["Front row needs attention.", "Great pacing!"];
-    safeSuggestions.slice(0, 5).forEach(text => {
+    const safeSuggestions = suggestions && suggestions.length ? suggestions : ["Front row needs attention.", "Great pacing!"];
+
+    safeSuggestions.slice(0, 3).forEach(text => {
         const item = document.createElement('div');
-        item.style.cssText = "display:flex; gap:10px; background:#F5F3FF; padding:12px; border-radius:12px; font-size:13px; color:#2E1065;";
+        item.style.cssText = "display:flex; gap:10px; background:#F5F3FF; padding:12px; border-radius:12px; font-size:13px; color:#2E1065; margin-bottom: 8px;";
         item.innerHTML = `<i data-lucide="sparkles" size="16" style="min-width:16px; color:#7C3AED;"></i> <span>${text}</span>`;
         list.appendChild(item);
     });
@@ -337,49 +224,44 @@ function renderChart(dataPoints) {
     });
 }
 
-// --- Standard Boilerplate ---
 function openStartSheet() { document.getElementById('startModal').classList.add('active'); }
 function closeStartSheet() { document.getElementById('startModal').classList.remove('active'); }
-function handleOverlayClick(e) { if (e.target.id === 'startModal') closeStartSheet(); }
+function handleOverlayClick(e) {
+    if (e.target.id === 'startModal') closeStartSheet();
+    if (e.target.id === 'historyModal') closeHistoryModal();
+}
 
-function loadSimulation(id) {
-    if(isLessonActive) { alert("Please end the active lesson first."); return; }
-
-    const subject = id === 1 ? "Algebra II" : "Literature";
-    document.getElementById('liveSubjectTitle').innerText = subject;
-
+function loadSimulation(fileId, subjectName) {
+    if(isLessonActive) { alert("End active lesson first"); return; }
+    document.getElementById('liveSubjectTitle').innerText = subjectName;
     document.getElementById('liveIndicator').style.display = 'none';
     document.getElementById('powerBtn').style.display = 'none';
-
+    closeHistoryModal();
     navTo('view-dashboard');
-    loadDashboardData(true);
+    loadDashboardData(true, fileId);
 }
 
 async function handleStart(e) {
     e.preventDefault();
     const subject = document.getElementById('inpSubject').value;
     const topic = document.getElementById('inpTopic').value;
+    const isSingle = document.getElementById('inpSingleMode').checked;
 
     try {
         await fetch('/api/start_lesson', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ subject, topic })
+            body: JSON.stringify({ subject, topic, mode: isSingle ? 'single' : 'group' })
         });
         isLessonActive = true;
-
         document.getElementById('liveSubjectTitle').innerText = subject;
-
         document.getElementById('liveIndicator').style.display = 'flex';
         document.getElementById('powerBtn').style.display = 'flex';
-
         closeStartSheet();
         updateUIState();
         navTo('view-dashboard');
         loadDashboardData();
-    } catch(err) {
-        console.error("Start error", err);
-    }
+    } catch(err) { console.error("Start error", err); }
 }
 
 async function endSession() {
@@ -391,12 +273,154 @@ async function endSession() {
     }
 }
 
-// Init
+function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+}
+function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    addMessageToUI(text, 'user');
+    input.value = ''; input.style.height = 'auto';
+    try {
+        const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ message: text }) });
+        const data = await res.json();
+        addMessageToUI(data.reply, 'ai');
+    } catch (e) { addMessageToUI("Connection error.", 'ai'); }
+}
+
+function addMessageToUI(text, sender) {
+    const container = document.getElementById('chatContainer');
+    const div = document.createElement('div');
+    div.className = `message ${sender}`;
+    div.innerHTML = sender === 'ai' ? `<div class="avatar-small"><i data-lucide="bot" size="16"></i></div><div class="bubble">${text}</div>` : `<div class="bubble">${text}</div>`;
+    container.appendChild(div);
+    lucide.createIcons();
+    container.scrollTop = container.scrollHeight;
+}
+
+function initWeeklyGauge() {
+    const scoreEl = document.getElementById('omegaScoreVal');
+    const fill = document.getElementById('weeklyProgress');
+    if(!scoreEl || !fill) return;
+    let score = 0; const target = 92;
+    const interval = setInterval(() => { score++; scoreEl.innerText = score + '%'; if(score >= target) clearInterval(interval); }, 12);
+    setTimeout(() => { fill.style.strokeDashoffset = '30'; }, 100);
+}
+
+function switchWeeklyTab(tabId, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.tab-pane').forEach(p => {
+        p.style.display = 'none';
+    });
+
+    const target = document.getElementById(tabId);
+    if(target) {
+        target.style.display = tabId === 'tab-graphs' ? 'flex' : 'block';
+
+        if(tabId === 'tab-insights') loadMonthlyInsights();
+        if(tabId === 'tab-graphs') {
+            setTimeout(() => {
+                initWeeklyGraphs();
+                weeklyCharts.forEach(c => c?.resize());
+            }, 50);
+        }
+    }
+    lucide.createIcons();
+}
+
+function initWeeklyGraphs() {
+    if (weeklyCharts.length > 0) return;
+
+    const ctx1 = document.getElementById('chart1')?.getContext('2d');
+    const ctx2 = document.getElementById('chart2')?.getContext('2d');
+    const ctx3 = document.getElementById('chart3')?.getContext('2d');
+
+    if (!ctx1 || !ctx2 || !ctx3) return;
+
+    weeklyCharts[0] = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [
+                { label: 'This Month', data: [82, 85, 88, 92], borderColor: '#7C3AED', backgroundColor: 'rgba(124, 58, 237, 0.1)', borderWidth: 3, tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: 'white' },
+                { label: 'Last Month', data: [75, 78, 76, 80], borderColor: '#CBD5E1', borderWidth: 2, borderDash: [5, 5], tension: 0.4, fill: false, pointRadius: 0 }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 10 } } }, scales: { x: { grid: { display: false } }, y: { display: false, min: 60 } } }
+    });
+
+    weeklyCharts[1] = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['Math', 'Phys', 'Hist', 'Eng'],
+            datasets: [
+                { label: 'Avg', data: [92, 85, 76, 88], backgroundColor: '#7C3AED', borderRadius: 4, barPercentage: 0.6 },
+                { label: 'Prev', data: [88, 80, 78, 85], backgroundColor: '#E2E8F0', borderRadius: 4, barPercentage: 0.6 }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 10 } } }, scales: { x: { grid: { display: false } }, y: { display: false, min: 0 } } }
+    });
+
+    weeklyCharts[2] = new Chart(ctx3, {
+        type: 'radar',
+        data: {
+            labels: ['Pacing', 'Clarity', 'Interact', 'Energy', 'Visuals'],
+            datasets: [
+                { label: 'Stats', data: [90, 85, 95, 80, 88], borderColor: '#7C3AED', backgroundColor: 'rgba(124, 58, 237, 0.2)', borderWidth: 2, pointRadius: 0 }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 10 } } },
+            scales: { r: { ticks: { display: false }, grid: { color: '#F1F5F9' } } }
+        }
+    });
+}
+
+function nextGraph() {
+    currentGraphIndex = (currentGraphIndex + 1) % 3;
+    updateGraphVisibility();
+}
+
+function prevGraph() {
+    currentGraphIndex = (currentGraphIndex - 1 + 3) % 3;
+    updateGraphVisibility();
+}
+
+function updateGraphVisibility() {
+    document.querySelectorAll('.chart-slide').forEach((el, idx) => {
+        el.style.opacity = idx === currentGraphIndex ? '1' : '0';
+        el.style.pointerEvents = idx === currentGraphIndex ? 'auto' : 'none';
+        el.style.zIndex = idx === currentGraphIndex ? '5' : '1';
+    });
+    document.querySelectorAll('.carousel-dots .dot').forEach((d, i) => {
+        d.classList.toggle('active', i === currentGraphIndex);
+    });
+    document.getElementById('carouselTitle').innerText = graphTitles[currentGraphIndex];
+}
+
+async function loadMonthlyInsights() {
+    const container = document.getElementById('monthly-ai-content');
+    if(!container) return;
+    try {
+        const res = await fetch('/api/monthly_insights');
+        const data = await res.json();
+        container.innerHTML = `<p style="font-size:14px; line-height:1.6; color:#2E1065;">${data.text}</p>`;
+    } catch(e) { container.innerHTML = '<p>Unavailable.</p>'; }
+}
+
+fetchHistory();
+
 if (window.initialSessionActive) {
     isLessonActive = true;
     document.getElementById('liveIndicator').style.display = 'flex';
     document.getElementById('powerBtn').style.display = 'flex';
-
     updateUIState();
     loadDashboardData();
 } else {

@@ -1,0 +1,47 @@
+{
+    "timestamp": 1770302191.933383,
+    "date_str": "05/02 16:36",
+    "subject": "Civics",
+    "topic": "Human Rights",
+    "mode": "group",
+    "avg_attention": 87,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 90
+        },
+        {
+            "id": 1,
+            "attention": 80
+        },
+        {
+            "id": 2,
+            "attention": 90
+        },
+        {
+            "id": 3,
+            "attention": 89
+        },
+        {
+            "id": 4,
+            "attention": 91
+        },
+        {
+            "id": 5,
+            "attention": 92
+        }
+    ],
+    "attention_time": [
+        86,
+        89,
+        89,
+        92,
+        88,
+        87
+    ],
+    "suggestions": [
+        "Energy is dropping.",
+        "Perfect visual aids.",
+        "Ask more questions."
+    ]
+}
