@@ -1,0 +1,47 @@
+{
+    "timestamp": 1771403809.98119,
+    "date_str": "18/02 10:36",
+    "subject": "Civics",
+    "topic": "Human Rights Law",
+    "mode": "group",
+    "avg_attention": 84,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 92
+        },
+        {
+            "id": 1,
+            "attention": 99
+        },
+        {
+            "id": 2,
+            "attention": 83
+        },
+        {
+            "id": 3,
+            "attention": 69
+        },
+        {
+            "id": 4,
+            "attention": 82
+        },
+        {
+            "id": 5,
+            "attention": 97
+        }
+    ],
+    "attention_time": [
+        90,
+        94,
+        82,
+        77,
+        76,
+        75
+    ],
+    "suggestions": [
+        "Great tone and enthusiasm.",
+        "Excellent student participation!",
+        "High engagement throughout the lesson."
+    ]
+}

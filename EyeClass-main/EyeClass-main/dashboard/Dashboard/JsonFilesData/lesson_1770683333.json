@@ -1,0 +1,26 @@
+{
+    "timestamp": 1770683333.787419,
+    "date_str": "10/02 02:28",
+    "subject": "Geography",
+    "topic": "Climate Change Impacts",
+    "mode": "single",
+    "avg_attention": 31,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 31
+        }
+    ],
+    "attention_time": [
+        31,
+        37,
+        37,
+        39,
+        33,
+        32
+    ],
+    "suggestions": [
+        "Break down the material into smaller chunks.",
+        "Speak a bit louder and move around the room."
+    ]
+}

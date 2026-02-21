@@ -1,0 +1,26 @@
+{
+    "timestamp": 1771188739.405479,
+    "date_str": "15/02 22:52",
+    "subject": "Computer Science",
+    "topic": "Data Structures",
+    "mode": "single",
+    "avg_attention": 42,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 42
+        }
+    ],
+    "attention_time": [
+        50,
+        46,
+        38,
+        47,
+        44,
+        32
+    ],
+    "suggestions": [
+        "Allocate more time for guided practice.",
+        "Speak a bit louder and move around the room."
+    ]
+}
