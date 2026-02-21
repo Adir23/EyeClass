@@ -1,0 +1,47 @@
+{
+    "timestamp": 1770560270.379771,
+    "date_str": "08/02 16:17",
+    "subject": "Civics",
+    "topic": "Human Rights Law",
+    "mode": "group",
+    "avg_attention": 52,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 48
+        },
+        {
+            "id": 1,
+            "attention": 50
+        },
+        {
+            "id": 2,
+            "attention": 52
+        },
+        {
+            "id": 3,
+            "attention": 38
+        },
+        {
+            "id": 4,
+            "attention": 44
+        },
+        {
+            "id": 5,
+            "attention": 49
+        }
+    ],
+    "attention_time": [
+        55,
+        60,
+        56,
+        42,
+        60,
+        50
+    ],
+    "suggestions": [
+        "Summarize key takeaways to recenter the class.",
+        "Call on specific students to increase focus.",
+        "Use a quick poll to check for understanding."
+    ]
+}
