@@ -1,0 +1,28 @@
+{
+    "timestamp": 1769556076.808143,
+    "date_str": "28/01 01:21",
+    "subject": "Literature",
+    "topic": "Shakespearean Tragedies",
+    "mode": "single",
+    "avg_attention": 24,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 24
+        }
+    ],
+    "attention_time": [
+        19,
+        17,
+        18,
+        28,
+        32,
+        33
+    ],
+    "suggestions": [
+        "Students seem confused, try simplifying.",
+        "Consider adding a 5-minute brain break.",
+        "Energy dropped significantly; try an interactive activity.",
+        "Ask students to read a passage aloud to regain focus."
+    ]
+}
