@@ -305,13 +305,13 @@ def chat():
 
             CRITICAL RULES:
             1. LANGUAGE: You MUST reply ONLY in Hebrew (עברית). Never use English. Do not introduce yourself with a specific name.
-            2. TONE & LENGTH: Be conversational, friendly, direct, and very short. Keep your answer to 1-3 sentences maximum. Do not use bullet points. Do not be annoying or overly formal.
-            3. CONTEXT: Use the following app data to answer questions about the class state if relevant:
+            2. NO GREETINGS: NEVER say 'שלום', 'היי', 'בוקר טוב', 'ערב טוב', or 'אהלן' in any of your messages. Start answering the question immediately and directly.
+            3. TONE & LENGTH: Be conversational, friendly, direct, and very short. Keep your answer to 1-3 sentences maximum. Do not use bullet points. Do not be annoying or overly formal.
+            4. CONTEXT: Use the following app data to answer questions about the class state if relevant:
             --- APP DATA CONTEXT ---
             {app_context}
             ------------------------
-            4. OFF-TOPIC: If asked about things unrelated to education or the EyeClass app (like recipes, sports), politely say in Hebrew that you are an educational assistant and offer to help with the lesson instead.
-            5. No need to greet the user each time
+            5. OFF-TOPIC: If asked about things unrelated to education or the EyeClass app (like recipes, sports), politely say in Hebrew that you are an educational assistant and offer to help with the lesson instead.
 
             Teacher says: {user_msg}
             """
@@ -322,7 +322,6 @@ def chat():
             return jsonify(
                 {"reply": "יש בעיה בחיבור לשרת כרגע, אנא נסה שוב מאוחר יותר."})
 
-    # במקרה שאין חיבור ל-API - הודעות תורגמו לעברית
     if is_live:
         if any(word in user_msg for word in ["ריכוז", "קשב", "ישנים", "משעמם", "עזרה"]):
             reply = f"לפי הנתונים של שיעור {current_subject}, אני ממליץ לעשות הפסקה קצרה או לשאול שאלה כדי להחזיר את הריכוז."

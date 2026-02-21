@@ -1,10 +1,13 @@
-// LINE 246 IS FOR CHANGING TIME BETWEEN LIVE LESSON STATS UPDATE
-// Please keep updated with every change
-
 lucide.createIcons();
 let isLessonActive = false;
+let isSimulatingHistory = false;
 let chartInstance = null;
 let dashboardPollTimer = null;
+
+let currentTrendData = [];
+let zenStartTime = null;
+let zenEngagementSum = 0;
+let zenUpdatesCount = 0;
 
 let weeklyCharts = [];
 let currentGraphIndex = 0;
@@ -35,49 +38,36 @@ let originalNavTo = function (viewId)
     const dashHeader = document.getElementById('dashHeader');
     const chatHeader = document.getElementById('chatHeader');
 
-    if (homeHeader)
-    {
-        homeHeader.style.display = 'none';
-    }
-    if (dashHeader)
-    {
-        dashHeader.style.display = 'none';
-    }
-    if (chatHeader)
-    {
-        chatHeader.style.display = 'none';
-    }
+    if (homeHeader) { homeHeader.style.display = 'none'; }
+    if (dashHeader) { dashHeader.style.display = 'none'; }
+    if (chatHeader) { chatHeader.style.display = 'none'; }
 
-    if (viewId === 'view-home' && homeHeader)
-    {
-        homeHeader.style.display = 'flex';
-    }
-    if (viewId === 'view-dashboard' && dashHeader)
-    {
-        dashHeader.style.display = 'flex';
-    }
-    if (viewId === 'view-chat' && chatHeader)
-    {
-        chatHeader.style.display = 'flex';
-    }
+    if (viewId === 'view-home' && homeHeader) { homeHeader.style.display = 'flex'; }
+    if (viewId === 'view-dashboard' && dashHeader) { dashHeader.style.display = 'flex'; }
+    if (viewId === 'view-chat' && chatHeader) { chatHeader.style.display = 'flex'; }
 
     document.querySelectorAll('.nav-item').forEach(btn =>
     {
         btn.classList.remove('active');
     });
 
-    if (viewId === 'view-home')
-    {
-        document.querySelector('.nav-item:first-child')?.classList.add('active');
-    }
-    if (viewId === 'view-chat')
-    {
-        document.querySelector('.nav-item:last-child')?.classList.add('active');
-    }
+    if (viewId === 'view-home') { document.querySelector('.nav-item:first-child')?.classList.add('active'); }
+    if (viewId === 'view-chat') { document.querySelector('.nav-item:last-child')?.classList.add('active'); }
 };
 
 function navTo(viewId)
 {
+    if (viewId === 'view-home' || viewId === 'view-chat')
+    {
+        isSimulatingHistory = false;
+        document.body.classList.remove('history-mode');
+        if (dashboardPollTimer && !isLessonActive)
+        {
+            clearTimeout(dashboardPollTimer);
+        }
+        updateUIState();
+    }
+
     originalNavTo(viewId);
     if (viewId === 'view-monthly')
     {
@@ -106,6 +96,7 @@ function updateUIState()
     const statusCard = document.getElementById('statusCard');
     const recentList = document.getElementById('recentSessionList');
     const seeAllBtn = document.getElementById('seeAllBtn');
+    const liveTools = document.getElementById('dashboardLiveTools');
 
     if (!mainBtn || !statusCard)
     {
@@ -119,13 +110,13 @@ function updateUIState()
         statusCard.style.background = 'linear-gradient(135deg, #FCA5A5 0%, #E11D48 100%)';
         statusCard.innerHTML = `<div><h2>Lesson in Progress</h2><p>Tracking engagement live...</p></div><button class="hero-btn" onclick="navTo('view-dashboard')"><i data-lucide="bar-chart-2" size="16"></i> <span>View Dashboard</span></button>`;
 
-        // החשכת אזור ההיסטוריה בזמן שיעור לייב
         if (recentList && seeAllBtn)
         {
             recentList.classList.add('disabled-history');
             seeAllBtn.style.opacity = '0.4';
             seeAllBtn.style.pointerEvents = 'none';
         }
+        if (liveTools) liveTools.style.display = 'flex';
     }
     else
     {
@@ -134,13 +125,13 @@ function updateUIState()
         statusCard.style.background = 'linear-gradient(135deg, #C4B5FD 0%, #8B5CF6 100%)';
         statusCard.innerHTML = `<div><h2>Ready to Teach?</h2><p>Start a new session now.</p></div><button class="hero-btn" onclick="openStartSheet()"><i data-lucide="play" size="16"></i> <span>Start Lesson</span></button>`;
 
-        // החזרת מצב ההיסטוריה כשאין לייב
         if (recentList && seeAllBtn)
         {
             recentList.classList.remove('disabled-history');
             seeAllBtn.style.opacity = '1';
             seeAllBtn.style.pointerEvents = 'auto';
         }
+        if (liveTools) liveTools.style.display = 'none';
     }
     lucide.createIcons();
 }
@@ -153,6 +144,48 @@ async function fetchHistory()
         const list = await res.json();
         renderHistoryList('recentSessionList', list.slice(0, 3));
         renderHistoryList('fullHistoryList', list);
+
+        if (list.length > 0)
+        {
+            let sum = 0;
+            list.forEach(item =>
+            {
+                sum += item.score;
+            });
+            let avg = Math.round(sum / list.length);
+
+            const engVal = document.getElementById('overallEngagementVal');
+            if (engVal)
+            {
+                engVal.innerText = avg + '%';
+            }
+
+            const hoursVal = document.getElementById('totalHoursVal');
+            if (hoursVal)
+            {
+                hoursVal.innerText = Math.round(list.length * 0.75) + 'h';
+            }
+        }
+
+        if (list.length >= 3)
+        {
+            if (list[0].score >= 80 && list[1].score >= 80 && list[2].score >= 80)
+            {
+                const streakEl = document.getElementById('streakBadge');
+                if (streakEl)
+                {
+                    streakEl.style.display = 'flex';
+                }
+            }
+            else
+            {
+                const streakEl = document.getElementById('streakBadge');
+                if (streakEl)
+                {
+                    streakEl.style.display = 'none';
+                }
+            }
+        }
     }
     catch (e)
     {
@@ -237,19 +270,79 @@ async function loadDashboardData(isStatic = false, specificFileId = null)
         const json = await res.json();
         const data = json.data;
 
+        window.latestBlocksData = data.blocks;
+        window.currentTrendData = data.attention_time;
+
+        if (isStatic)
+        {
+            window.replayFrames = [];
+            let finalBlocks = data.blocks;
+            let trend = data.attention_time;
+
+            for(let i = 0; i < 6; i++)
+            {
+                let frameAvg = trend[i];
+                let frameBlocks = finalBlocks.map(b =>
+                {
+                    let diff = frameAvg - data.avg_attention;
+                    let val = b.attention + diff + (Math.random() * 8 - 4);
+                    val = Math.max(10, Math.min(100, val));
+                    return { id: b.id, attention: Math.round(val) };
+                });
+
+                if (i === 5)
+                {
+                    frameBlocks = finalBlocks;
+                }
+                window.replayFrames.push(frameBlocks);
+            }
+
+            document.getElementById('replayContainer').style.display = 'block';
+            document.getElementById('replaySlider').value = 5;
+            document.getElementById('replayTime').innerText = 'End';
+        }
+        else
+        {
+            document.getElementById('replayContainer').style.display = 'none';
+        }
+
         renderHeatmap(data.blocks);
         renderChart(data.attention_time);
-        renderAISuggestions(data.suggestions);
+
+        renderAISuggestions(data.suggestions.slice(0, 3));
+
+        if (document.body.classList.contains('zen-mode-active'))
+        {
+            updateZenVibe();
+        }
 
         if (isLessonActive && !isStatic)
         {
-            dashboardPollTimer = setTimeout(loadDashboardData, 5000); // CHANGE TIME FOR UPDATING LIVE LESSON STATS
+            dashboardPollTimer = setTimeout(loadDashboardData, 3000);
         }
     }
     catch (e)
     {
         console.error("Dashboard load error:", e);
     }
+}
+
+function handleReplaySlide(val)
+{
+    let index = parseInt(val);
+    if (!window.replayFrames || !window.replayFrames[index])
+    {
+        return;
+    }
+
+    let blocks = window.replayFrames[index];
+    renderHeatmap(blocks);
+
+    let partialTrend = window.currentTrendData.map((v, i) => i <= index ? v : null);
+    renderChart(partialTrend);
+
+    let timeLabels = ['Start', '5m', '10m', '15m', '20m', 'End'];
+    document.getElementById('replayTime').innerText = timeLabels[index];
 }
 
 function renderHeatmap(blocks)
@@ -263,27 +356,56 @@ function renderHeatmap(blocks)
 
     if (blocks.length === 1)
     {
-        grid.style.display = 'flex';
-        grid.style.justifyContent = 'center';
-        grid.style.alignItems = 'center';
-        grid.style.height = '100%';
+        grid.className = 'heatmap-grid single-mode';
 
         const block = blocks[0];
         const div = document.createElement('div');
-        const type = block.attention > 75 ? 'high' : block.attention > 45 ? 'med' : 'low';
+
+        let type = '';
+        if (block.attention > 75)
+        {
+            type = 'high';
+        }
+        else if (block.attention > 45)
+        {
+            type = 'med';
+        }
+        else if (block.attention >= 40)
+        {
+            type = 'low';
+        }
+        else
+        {
+            type = 'critical';
+        }
 
         div.className = `heat-circle single ${type}`;
         div.setAttribute('data-val', block.attention);
-        div.innerHTML = `<span style="font-size:32px; font-weight:800; color:white;">${block.attention}%</span>`;
         grid.appendChild(div);
     }
     else
     {
-        grid.style.display = 'grid';
+        grid.className = 'heatmap-grid';
         blocks.forEach(block =>
         {
             const div = document.createElement('div');
-            const type = block.attention > 75 ? 'high' : block.attention > 45 ? 'med' : 'low';
+            let type = '';
+            if (block.attention > 75)
+            {
+                type = 'high';
+            }
+            else if (block.attention > 45)
+            {
+                type = 'med';
+            }
+            else if (block.attention >= 40)
+            {
+                type = 'low';
+            }
+            else
+            {
+                type = 'critical';
+            }
             div.className = `heat-circle ${type}`;
             div.setAttribute('data-val', block.attention);
             grid.appendChild(div);
@@ -299,13 +421,13 @@ function renderAISuggestions(suggestions)
         return;
     }
     list.innerHTML = '';
-    const safeSuggestions = suggestions && suggestions.length ? suggestions : ["Front row needs attention.", "Great pacing!"];
 
-    safeSuggestions.slice(0, 3).forEach(text =>
+    suggestions.forEach(text =>
     {
         const item = document.createElement('div');
-        item.style.cssText = "display:flex; align-items:center; gap:10px; background:#F5F3FF; padding:14px 16px; border-radius:12px; font-size:13px; color:#2E1065; margin-bottom: 8px; min-height:54px;";
-        item.innerHTML = `<i data-lucide="sparkles" size="18" style="min-width:18px; color:#7C3AED; display:flex;"></i> <span style="line-height:1.3;">${text}</span>`;
+        // הקצאת מחלקה ייעודית שה-CSS יודע לכווץ במצב היסטוריה ולהגדיל בלייב
+        item.className = 'ai-insight-item';
+        item.innerHTML = `<i data-lucide="sparkles" size="18" style="min-width:18px; color:#7C3AED; display:flex;"></i> <span style="line-height:1.25;">${text}</span>`;
         list.appendChild(item);
     });
     lucide.createIcons();
@@ -327,20 +449,21 @@ function renderChart(dataPoints)
     }
     const context = ctx.getContext('2d');
     let gradient = context.createLinearGradient(0, 0, 0, 150);
-    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.4)');
+    // גרדיאנט חזק ויפה יותר
+    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.45)');
     gradient.addColorStop(1, 'rgba(124, 58, 237, 0.0)');
 
     chartInstance = new Chart(context, {
         type: 'line',
         data: {
-            labels: ['10m', '15m', '20m', '25m', '30m', 'Now'],
+            labels: ['Start', '5m', '10m', '15m', '20m', 'Now'],
             datasets: [{
                 data: dataPoints,
                 borderColor: '#7C3AED',
                 borderWidth: 2,
                 backgroundColor: gradient,
                 fill: true,
-                pointRadius: 5,
+                pointRadius: 4,
                 pointBackgroundColor: '#fff',
                 pointBorderColor: '#7C3AED',
                 pointBorderWidth: 2,
@@ -350,9 +473,9 @@ function renderChart(dataPoints)
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            layout: { padding: { left: -10, bottom: 0, top: 20, right: 10 } },
+            layout: { padding: { left: -10, bottom: 0, top: 10, right: 10 } },
             plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-            scales: { x: { display: false }, y: { display: false, min: 20, max: 100 } },
+            scales: { x: { display: false }, y: { display: false, min: 0, max: 100 } },
             animation: { duration: 1000 }
         }
     });
@@ -368,7 +491,6 @@ function closeStartSheet()
     document.getElementById('startModal').classList.remove('active');
 }
 
-// פונקציות מודל סיום שיעור במקום אלרט ואישור
 function openEndModal()
 {
     document.getElementById('endModal').classList.add('active');
@@ -397,15 +519,17 @@ function handleOverlayClick(e)
 
 function loadSimulation(fileId, subjectName)
 {
-    // אלרט בוטל, במקום זה אם יש שיעור פעיל פשוט נחזיר כלום (הכפתור גם ככה כבוי)
     if (isLessonActive)
     {
         return;
     }
-
+    isSimulatingHistory = true;
+    document.body.classList.add('history-mode');
     document.getElementById('liveSubjectTitle').innerText = subjectName;
     document.getElementById('liveIndicator').style.display = 'none';
     document.getElementById('powerBtn').style.display = 'none';
+    const liveTools = document.getElementById('dashboardLiveTools');
+    if (liveTools) liveTools.style.display = 'none';
     closeHistoryModal();
     navTo('view-dashboard');
     loadDashboardData(true, fileId);
@@ -426,6 +550,8 @@ async function handleStart(e)
             body: JSON.stringify({ subject, topic, mode: isSingle ? 'single' : 'group' })
         });
         isLessonActive = true;
+        isSimulatingHistory = false;
+        document.body.classList.remove('history-mode');
         document.getElementById('liveSubjectTitle').innerText = subject;
         document.getElementById('liveIndicator').style.display = 'flex';
         document.getElementById('powerBtn').style.display = 'flex';
@@ -440,12 +566,13 @@ async function handleStart(e)
     }
 }
 
-// פונקציה חדשה שמסיימת בפועל את השיעור אחרי אישור במודל
 async function confirmEndSession()
 {
     closeEndModal();
     await fetch('/api/end_lesson', { method: 'POST' });
     isLessonActive = false;
+    isSimulatingHistory = false;
+    document.body.classList.remove('history-mode');
 
     if (dashboardPollTimer)
     {
@@ -453,6 +580,7 @@ async function confirmEndSession()
     }
 
     updateUIState();
+    fetchHistory();
     navTo('view-home');
 }
 
@@ -502,7 +630,7 @@ async function sendMessage()
     catch (e)
     {
         document.getElementById(loadingId)?.remove();
-        addMessageToUI("Connection error. Please try again.", 'ai');
+        addMessageToUI("שגיאת התחברות. נסה שוב.", 'ai');
     }
 }
 
@@ -516,7 +644,6 @@ function addMessageToUI(text, sender, id = null)
         div.id = id;
     }
 
-    // הוספנו dir="rtl" ויישור לימין כדי שהפיסוק יהיה מושלם בעברית
     div.innerHTML = sender === 'ai'
         ? `<div class="avatar-small"><i data-lucide="bot" size="16"></i></div><div class="bubble" dir="rtl" style="text-align: right;">${text}</div>`
         : `<div class="bubble" dir="rtl" style="text-align: right;">${text}</div>`;
@@ -524,6 +651,138 @@ function addMessageToUI(text, sender, id = null)
     container.appendChild(div);
     lucide.createIcons();
     container.scrollTop = container.scrollHeight;
+}
+
+function activateMagicWand()
+{
+    if (!window.latestBlocksData || window.latestBlocksData.length === 0)
+    {
+        return;
+    }
+
+    let lowestBlock = window.latestBlocksData[0];
+
+    window.latestBlocksData.forEach(block =>
+    {
+        if (block.attention < lowestBlock.attention)
+        {
+            lowestBlock = block;
+        }
+    });
+
+    let zoneText = "התלמיד";
+    if (window.latestBlocksData.length === 6)
+    {
+        const id = lowestBlock.id;
+        const rowText = id < 3 ? "השורה האחורית" : "השורה הקדמית";
+        const colText = (id === 0 || id === 3) ? "משמאל" : (id === 1 || id === 4) ? "באמצע" : "מימין";
+
+        zoneText = `${rowText} ${colText}`;
+    }
+
+    const toast = document.getElementById('magicToast');
+    if (toast)
+    {
+        toast.innerHTML = `<i data-lucide="wand-2" size="18"></i> כדאי לשאול עכשיו את ${zoneText} (${lowestBlock.attention}%)`;
+        lucide.createIcons();
+        toast.classList.add('show');
+        setTimeout(() =>
+        {
+            toast.classList.remove('show');
+        }, 3500);
+    }
+}
+
+function toggleZenMode()
+{
+    const body = document.body;
+
+    if (body.classList.contains('zen-mode-active'))
+    {
+        body.classList.remove('zen-mode-active');
+        body.classList.remove('critical-edge');
+        document.body.style.setProperty('--zen-glow-color', 'transparent');
+        showZenSummary();
+    }
+    else
+    {
+        body.classList.add('zen-mode-active');
+        zenStartTime = new Date();
+        zenEngagementSum = 0;
+        zenUpdatesCount = 0;
+        updateZenVibe();
+    }
+}
+
+function updateZenVibe()
+{
+    if (!window.latestBlocksData || window.latestBlocksData.length === 0) return;
+
+    let totalAttention = 0;
+    let hasCritical = false;
+
+    window.latestBlocksData.forEach(block => {
+        totalAttention += block.attention;
+        if (block.attention < 30) hasCritical = true;
+    });
+
+    const average = totalAttention / window.latestBlocksData.length;
+
+    zenEngagementSum += average;
+    zenUpdatesCount++;
+
+    let glowColor = 'transparent';
+    if (average >= 75)
+    {
+        glowColor = 'rgba(5, 150, 105, 0.5)';
+    }
+    else if (average >= 45)
+    {
+        glowColor = 'rgba(217, 119, 6, 0.4)';
+    }
+    else
+    {
+        glowColor = 'rgba(185, 28, 28, 0.6)';
+    }
+
+    document.body.style.setProperty('--zen-glow-color', glowColor);
+
+    if (hasCritical)
+    {
+        document.body.classList.add('critical-edge');
+    }
+    else
+    {
+        document.body.classList.remove('critical-edge');
+    }
+}
+
+function showZenSummary()
+{
+    if (!zenStartTime || zenUpdatesCount === 0) return;
+
+    const now = new Date();
+    const durationSeconds = Math.round((now - zenStartTime) / 1000);
+    const averageEngagement = Math.round(zenEngagementSum / zenUpdatesCount);
+
+    let timeStr = durationSeconds + " שניות";
+    if (durationSeconds >= 60)
+    {
+        timeStr = Math.floor(durationSeconds / 60) + " דקות";
+    }
+
+    const toast = document.getElementById('magicToast');
+    if (toast)
+    {
+        toast.innerHTML = `🧘 סיכום זן: היינו פה ${timeStr} עם ממוצע קשב של ${averageEngagement}%`;
+        toast.classList.add('show');
+        setTimeout(() =>
+        {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+
+    zenStartTime = null;
 }
 
 function initWeeklyGauge(targetScore = 0)

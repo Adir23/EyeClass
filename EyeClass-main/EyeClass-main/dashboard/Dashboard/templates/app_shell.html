@@ -10,275 +10,304 @@
 </head>
 <body>
 
-    <div class="phone-frame">
-        <header class="app-header">
-            <div class="header-row" id="homeHeader">
-                <div class="user-greeting">
-                    <p>Good Morning,</p>
-                    <h1 style="font-size: 22px;">Tamar Illuz</h1>
+    <div class="phone-border" id="phoneBorder">
+        <div class="phone-screen" id="appFrame">
+            <header class="app-header">
+                <div class="header-row" id="homeHeader">
+                    <div class="user-greeting">
+                        <p>Good Morning,</p>
+                        <h1 style="font-size: 22px;">Tamar Illuz</h1>
+                    </div>
+                    <div class="avatar">
+                        <i data-lucide="user" size="24"></i>
+                    </div>
                 </div>
-                <div class="avatar">
-                    <i data-lucide="user" size="24"></i>
-                </div>
-            </div>
 
-            <div class="header-row" id="dashHeader" style="display:none;">
-                <div class="user-greeting">
-                    <p id="liveIndicator" style="color:var(--status-red); display:flex; align-items:center; gap:6px;">
-                        <span style="width:8px; height:8px; background:var(--status-red); border-radius:50%;"></span> LIVE
-                    </p>
-                    <h1 id="liveSubjectTitle">Math</h1>
-                </div>
-                <button id="powerBtn" onclick="openEndModal()" style="background:white; border:none; width:40px; height:40px; border-radius:50%; color:var(--status-red); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); cursor:pointer;">
-                    <i data-lucide="power" size="20"></i>
-                </button>
-            </div>
-
-            <div class="header-row" id="chatHeader" style="display:none; justify-content:center;">
-                <div style="text-align:center;">
-                    <h1 style="font-size:18px; color:var(--text-main);">EyeClass Assistant</h1>
-                    <p style="font-size:12px; color:var(--text-secondary);">Online</p>
-                </div>
-            </div>
-        </header>
-
-        <main class="main-content">
-
-            <section id="view-home" class="view-section active">
-                <div class="hero-card" id="statusCard"></div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; flex-shrink:0;">
-                    <span class="section-title">Overview</span>
-                    <button class="small-btn" onclick="navTo('view-monthly')">
-                        Monthly Report <i data-lucide="calendar" size="14"></i>
+                <div class="header-row" id="dashHeader" style="display:none;">
+                    <div class="user-greeting">
+                        <p id="liveIndicator" style="color:var(--status-red); display:flex; align-items:center; gap:6px;">
+                            <span style="width:8px; height:8px; background:var(--status-red); border-radius:50%;"></span> LIVE
+                        </p>
+                        <h1 id="liveSubjectTitle">Math</h1>
+                    </div>
+                    <button id="powerBtn" onclick="openEndModal()" style="background:white; border:none; width:40px; height:40px; border-radius:50%; color:var(--status-red); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); cursor:pointer;">
+                        <i data-lucide="power" size="20"></i>
                     </button>
                 </div>
 
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-icon-circle purple"><i data-lucide="trending-up" size="18"></i></div>
-                        <span class="stat-val">92%</span>
-                        <span class="stat-label">Engagement</span>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-icon-circle blue"><i data-lucide="clock" size="18"></i></div>
-                        <span class="stat-val">14h</span>
-                        <span class="stat-label">Tracked</span>
+                <div class="header-row" id="chatHeader" style="display:none; justify-content:center;">
+                    <div style="text-align:center;">
+                        <h1 style="font-size:18px; color:var(--text-main);">EyeClass Assistant</h1>
+                        <p style="font-size:12px; color:var(--text-secondary);">Online</p>
                     </div>
                 </div>
+            </header>
 
-                <div class="section-header" style="flex-shrink:0;">
-                    <span class="section-title">Recent Sessions</span>
-                    <span id="seeAllBtn" style="font-size:12px; color:var(--text-secondary); cursor:pointer; font-weight:600;" onclick="openHistoryModal()">See All</span>
-                </div>
+            <main class="main-content">
 
-                <div class="recent-list" id="recentSessionList">
-                    <p style="text-align:center; color:#999; margin-top:10px;">Loading...</p>
-                </div>
-            </section>
+                <section id="view-home" class="view-section active">
+                    <div class="hero-card" id="statusCard"></div>
 
-            <section id="view-dashboard" class="view-section">
-                <div class="heatmap-container">
-                    <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:5px;">
-                        <h4 style="color:var(--text-secondary); font-size:13px;">Class Map</h4>
-                        <i data-lucide="users" size="14" style="color:var(--accent);"></i>
-                    </div>
-                    <div class="heatmap-grid" id="classroomGrid"></div>
-                </div>
-                <div class="graph-card">
-                    <h4 style="color:var(--text-secondary); font-size:13px; margin-bottom:5px;">Engagement Trend</h4>
-                    <div style="flex:1; width:100%; position:relative;"><canvas id="lineChart"></canvas></div>
-                </div>
-                <div class="card analysis-card">
-                    <h4 style="color:var(--text-secondary); font-size:13px; margin-bottom:5px;">AI Insights</h4>
-                    <div id="aiSuggestionsList"></div>
-                </div>
-            </section>
-
-            <section id="view-chat" class="view-section" style="padding-bottom:0; display:block;">
-                <div class="chat-container" id="chatContainer">
-                    <div class="message ai">
-                        <div class="avatar-small"><i data-lucide="bot" size="16"></i></div>
-                        <div class="bubble" dir="rtl" style="text-align: right;">היי! אני עוזר ההוראה שלך. איך אפשר לעזור בשיעור היום?</div>
-                    </div>
-                </div>
-                <div class="chat-input-wrapper" dir="rtl">
-                    <textarea id="chatInput" rows="1" placeholder="הקלד הודעה..." onkeydown="handleEnter(event)" oninput="autoResize(this)" style="text-align: right;"></textarea>
-                    <button class="chat-send-btn" onclick="sendMessage()"><i data-lucide="send" size="18"></i></button>
-                </div>
-            </section>
-
-            <section id="view-monthly" class="view-section" style="padding: 0; background: var(--bg-app); display:flex; flex-direction:column;">
-                <div class="weekly-header-container">
-                    <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 20px 0;">
-                        <button onclick="navTo('view-home')" style="background:white; border:none; width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.05); color:var(--text-main);">
-                            <i data-lucide="arrow-left" size="18"></i>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; flex-shrink:0;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="section-title">Overview</span>
+                            <div id="streakBadge" class="streak-badge" style="display:none;">
+                                <i data-lucide="flame" size="14"></i> <span>רצף אש!</span>
+                            </div>
+                        </div>
+                        <button class="small-btn" onclick="navTo('view-monthly')">
+                            Monthly Report <i data-lucide="calendar" size="14"></i>
                         </button>
-                        <h2 style="font-size:16px; color:var(--text-main); font-weight:700;">Monthly Report</h2>
-                        <div style="width:36px;"></div>
                     </div>
-                    <div class="omega-wrapper">
-                        <svg class="omega-gauge" viewBox="0 0 200 200">
-                            <defs>
-                                <linearGradient id="gradDirect" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#D946EF;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle class="gauge-bg" cx="100" cy="100" r="80"></circle>
-                            <circle class="gauge-fill" id="weeklyProgress" cx="100" cy="100" r="80"></circle>
-                        </svg>
-                        <div class="omega-text">
-                            <span class="omega-score" id="omegaScoreVal">0%</span>
-                            <span class="omega-label" style="white-space:nowrap;">Monthly Score</span>
-                        </div>
-                    </div>
-                    <div class="tabs-nav">
-                        <button class="tab-btn active" onclick="switchWeeklyTab('tab-overview', this)">Overview</button>
-                        <button class="tab-btn" onclick="switchWeeklyTab('tab-graphs', this)">Graphs</button>
-                        <button class="tab-btn" onclick="switchWeeklyTab('tab-insights', this)">Insights</button>
-                    </div>
-                </div>
 
-                <div class="weekly-content" id="weeklyScrollArea">
-                    <div id="tab-overview" class="tab-pane active">
-                        <div class="metrics-grid-2x2">
-                            <div class="metric-box">
-                                <div class="metric-icon purple"><i data-lucide="clock" size="18"></i></div>
-                                <span class="metric-val">32h</span><span class="metric-lbl">Active</span>
-                            </div>
-                            <div class="metric-box">
-                                <div class="metric-icon blue"><i data-lucide="check-circle" size="18"></i></div>
-                                <span class="metric-val">42</span><span class="metric-lbl">Lessons</span>
-                            </div>
-                            <div class="metric-box">
-                                <div class="metric-icon pink"><i data-lucide="users" size="18"></i></div>
-                                <span class="metric-val">94%</span><span class="metric-lbl">Attend</span>
-                            </div>
-                            <div class="metric-box">
-                                <div class="metric-icon orange"><i data-lucide="zap" size="18"></i></div>
-                                <span class="metric-val">High</span><span class="metric-lbl">Energy</span>
-                            </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon-circle purple"><i data-lucide="trending-up" size="18"></i></div>
+                            <span class="stat-val" id="overallEngagementVal">--%</span>
+                            <span class="stat-label">Engagement</span>
                         </div>
-                        <div class="trend-card-gradient">
-                            <div class="trend-icon-square"><i data-lucide="trending-up" size="18"></i></div>
-                            <div class="trend-text"><h3>Upward Trend</h3><p>Engagement +8% this month</p></div>
+                        <div class="stat-item">
+                            <div class="stat-icon-circle blue"><i data-lucide="clock" size="18"></i></div>
+                            <span class="stat-val" id="totalHoursVal">--h</span>
+                            <span class="stat-label">Tracked</span>
                         </div>
                     </div>
-                    <div id="tab-graphs" class="tab-pane" style="display:none; height:100%; width: 100%; flex-direction:column;">
-                        <div class="card graph-carousel-card" style="width: 100%;">
-                            <div class="carousel-header">
-                                <button class="icon-btn" onclick="prevGraph()"><i data-lucide="chevron-left"></i></button>
-                                <span class="graph-title" id="carouselTitle">Engagement Trends</span>
-                                <button class="icon-btn" onclick="nextGraph()"><i data-lucide="chevron-right"></i></button>
-                            </div>
-                            <div class="carousel-content">
-                                <div class="chart-slide active" id="slide-1"><canvas id="chart1"></canvas></div>
-                                <div class="chart-slide" id="slide-2"><canvas id="chart2"></canvas></div>
-                                <div class="chart-slide" id="slide-3"><canvas id="chart3"></canvas></div>
-                            </div>
-                            <div class="carousel-dots">
-                                <div class="dot active" id="dot-1"></div>
-                                <div class="dot" id="dot-2"></div>
-                                <div class="dot" id="dot-3"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="tab-insights" class="tab-pane" style="display:none;">
-                         <div class="card" style="background:white; border:none; box-shadow:var(--shadow-soft); border-radius: 24px; padding: 20px; height: auto; flex: 1; max-height: 350px;">
-                            <div style="display:flex; gap:12px; margin-bottom:15px; align-items:center;">
-                                <div class="avatar-small" style="background:var(--bg-app); color:var(--primary);"><i data-lucide="sparkles" size="18"></i></div>
-                                <h4 style="margin:0; align-self:center; color:var(--text-main);">Gemini Analysis</h4>
-                            </div>
-                            <div id="monthly-ai-content" style="font-size:14px; line-height:1.5; color:var(--text-main);">
-                                <p style="color:#94A3B8;">Generating monthly insights...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
 
-        <div class="modal-overlay" id="startModal" onclick="handleOverlayClick(event)">
-            <div class="modal-card">
-                <div class="modal-handle"></div>
-                <h3 style="margin-bottom:5px; font-size:22px; color:var(--text-main);">New Session</h3>
-                <form onsubmit="handleStart(event)">
-                    <div class="input-group">
-                        <i data-lucide="book" size="20" style="color:var(--accent);"></i>
-                        <select id="inpSubject" required>
-                            <option value="" disabled selected hidden>Select Subject</option>
-                            <option>Mathematics</option>
-                            <option>Physics</option>
-                            <option>Computer Science</option>
-                            <option>Biology</option>
-                            <option>Chemistry</option>
-                            <option>History</option>
-                            <option>Civics</option>
-                            <option>Literature</option>
-                            <option>Geography</option>
-                            <option>Psychology</option>
-                            <option>Art</option>
-                        </select>
+                    <div class="section-header" style="flex-shrink:0;">
+                        <span class="section-title">Recent Sessions</span>
+                        <span id="seeAllBtn" style="font-size:12px; color:var(--text-secondary); cursor:pointer; font-weight:600;" onclick="openHistoryModal()">See All</span>
                     </div>
-                    <div class="input-group">
-                        <i data-lucide="users" size="20" style="color:var(--accent);"></i>
-                        <select id="inpClass" required>
-                            <option value="" disabled selected hidden>Select Class</option>
-                            <option>Class 9-A</option>
-                            <option>Class 9-B</option>
-                            <option>Class 10-A</option>
-                            <option>Class 10-B</option>
-                            <option>Class 11-A</option>
-                            <option>Class 11-B</option>
-                            <option>Class 12-A</option>
-                            <option>Class 12-B</option>
-                        </select>
+
+                    <div class="recent-list" id="recentSessionList">
+                        <p style="text-align:center; color:#999; margin-top:10px;">Loading...</p>
                     </div>
-                    <div class="input-group">
-                        <i data-lucide="type" size="20" style="color:var(--accent);"></i>
-                        <input type="text" id="inpTopic" placeholder="Lesson Topic" autocomplete="off" required>
+                </section>
+
+                <section id="view-dashboard" class="view-section">
+                    <div id="zenExitOverlay" onclick="toggleZenMode()"></div>
+
+                    <div class="heatmap-container" id="heatmapMainContainer">
+                        <div id="heatmapHeader" style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <h4 style="color:var(--text-secondary); font-size:13px; margin:0;">Class Map</h4>
+                                <i data-lucide="users" size="14" style="color:var(--accent);"></i>
+                            </div>
+                            <div id="dashboardLiveTools" style="display:flex; gap:8px;">
+                                <button class="icon-btn-small" onclick="activateMagicWand()" title="Smart Picker"><i data-lucide="wand-2" size="14"></i></button>
+                                <button class="icon-btn-small" onclick="toggleZenMode()" title="Zen Mode"><i data-lucide="maximize" size="14"></i></button>
+                            </div>
+                        </div>
+                        <div id="classroomGrid" class="heatmap-grid"></div>
                     </div>
-                    <div class="toggle-row">
-                        <div class="toggle-text"><h4>Single Focus Mode</h4><p>Track class as one unit</p></div>
-                        <label class="toggle-switch"><input type="checkbox" id="inpSingleMode"><span class="slider"></span></label>
+
+                    <div class="graph-card" id="graphCardBlock">
+                        <h4 style="color:var(--text-secondary); font-size:13px; margin-bottom:5px;">Engagement Trend</h4>
+                        <div style="flex:1; width:100%; position:relative;"><canvas id="lineChart"></canvas></div>
                     </div>
-                    <button type="submit" class="primary-btn">Start Monitoring</button>
-                </form>
+
+                    <div class="card analysis-card">
+                        <h4 style="color:var(--text-secondary); font-size:13px; margin-bottom:5px;">AI Insights</h4>
+                        <div id="aiSuggestionsList"></div>
+                    </div>
+
+                    <div id="replayContainer" class="replay-container" style="display:none;" dir="ltr">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                            <span style="font-size:12px; font-weight:700; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+                                <i data-lucide="play-circle" size="14"></i> Session Timeline
+                            </span>
+                            <span id="replayTime" style="font-size:11px; font-weight:800; color:var(--primary); background:#F3E8FF; padding:4px 10px; border-radius:12px;">End</span>
+                        </div>
+                        <input type="range" id="replaySlider" min="0" max="5" value="5" step="1" oninput="handleReplaySlide(this.value)">
+                    </div>
+                </section>
+
+                <section id="view-chat" class="view-section" style="padding-bottom:0; display:block;">
+                    <div class="chat-container" id="chatContainer">
+                        <div class="message ai">
+                            <div class="avatar-small"><i data-lucide="bot" size="16"></i></div>
+                            <div class="bubble" dir="rtl" style="text-align: right;">איך אפשר לעזור בשיעור היום?</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-wrapper" dir="rtl">
+                        <textarea id="chatInput" rows="1" placeholder="הקלד הודעה..." onkeydown="handleEnter(event)" oninput="autoResize(this)" style="text-align: right;"></textarea>
+                        <button class="chat-send-btn" onclick="sendMessage()"><i data-lucide="send" size="18"></i></button>
+                    </div>
+                </section>
+
+                <section id="view-monthly" class="view-section" style="padding: 0; background: var(--bg-app); display:flex; flex-direction:column;">
+                    <div class="weekly-header-container">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 20px 0;">
+                            <button onclick="navTo('view-home')" style="background:white; border:none; width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.05); color:var(--text-main);">
+                                <i data-lucide="arrow-left" size="18"></i>
+                            </button>
+                            <h2 style="font-size:16px; color:var(--text-main); font-weight:700;">Monthly Report</h2>
+                            <div style="width:36px;"></div>
+                        </div>
+                        <div class="omega-wrapper">
+                            <svg class="omega-gauge" viewBox="0 0 200 200">
+                                <defs>
+                                    <linearGradient id="gradDirect" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#D946EF;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="gauge-bg" cx="100" cy="100" r="80"></circle>
+                                <circle class="gauge-fill" id="weeklyProgress" cx="100" cy="100" r="80"></circle>
+                            </svg>
+                            <div class="omega-text">
+                                <span class="omega-score" id="omegaScoreVal">0%</span>
+                                <span class="omega-label" style="white-space:nowrap;">Monthly Score</span>
+                            </div>
+                        </div>
+                        <div class="tabs-nav">
+                            <button class="tab-btn active" onclick="switchWeeklyTab('tab-overview', this)">Overview</button>
+                            <button class="tab-btn" onclick="switchWeeklyTab('tab-graphs', this)">Graphs</button>
+                            <button class="tab-btn" onclick="switchWeeklyTab('tab-insights', this)">Insights</button>
+                        </div>
+                    </div>
+
+                    <div class="weekly-content" id="weeklyScrollArea">
+                        <div id="tab-overview" class="tab-pane active">
+                            <div class="metrics-grid-2x2">
+                                <div class="metric-box">
+                                    <div class="metric-icon purple"><i data-lucide="clock" size="18"></i></div>
+                                    <span class="metric-val">32h</span><span class="metric-lbl">Active</span>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-icon blue"><i data-lucide="check-circle" size="18"></i></div>
+                                    <span class="metric-val">42</span><span class="metric-lbl">Lessons</span>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-icon pink"><i data-lucide="users" size="18"></i></div>
+                                    <span class="metric-val">94%</span><span class="metric-lbl">Attend</span>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-icon orange"><i data-lucide="zap" size="18"></i></div>
+                                    <span class="metric-val">High</span><span class="metric-lbl">Energy</span>
+                                </div>
+                            </div>
+                            <div class="trend-card-gradient">
+                                <div class="trend-icon-square"><i data-lucide="trending-up" size="18"></i></div>
+                                <div class="trend-text"><h3>Upward Trend</h3><p>Engagement +8% this month</p></div>
+                            </div>
+                        </div>
+                        <div id="tab-graphs" class="tab-pane" style="display:none; height:100%; width: 100%; flex-direction:column;">
+                            <div class="card graph-carousel-card" style="width: 100%;">
+                                <div class="carousel-header">
+                                    <button class="icon-btn" onclick="prevGraph()"><i data-lucide="chevron-left"></i></button>
+                                    <span class="graph-title" id="carouselTitle">Engagement Trends</span>
+                                    <button class="icon-btn" onclick="nextGraph()"><i data-lucide="chevron-right"></i></button>
+                                </div>
+                                <div class="carousel-content">
+                                    <div class="chart-slide active" id="slide-1"><canvas id="chart1"></canvas></div>
+                                    <div class="chart-slide" id="slide-2"><canvas id="chart2"></canvas></div>
+                                    <div class="chart-slide" id="slide-3"><canvas id="chart3"></canvas></div>
+                                </div>
+                                <div class="carousel-dots">
+                                    <div class="dot active" id="dot-1"></div>
+                                    <div class="dot" id="dot-2"></div>
+                                    <div class="dot" id="dot-3"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-insights" class="tab-pane" style="display:none;">
+                             <div class="card" style="background:white; border:none; box-shadow:var(--shadow-soft); border-radius: 24px; padding: 20px; height: auto; flex: 1; max-height: 350px;">
+                                <div style="display:flex; gap:12px; margin-bottom:15px; align-items:center;">
+                                    <div class="avatar-small" style="background:var(--bg-app); color:var(--primary);"><i data-lucide="sparkles" size="18"></i></div>
+                                    <h4 style="margin:0; align-self:center; color:var(--text-main);">Gemini Analysis</h4>
+                                </div>
+                                <div id="monthly-ai-content" style="font-size:14px; line-height:1.5; color:var(--text-main);">
+                                    <p style="color:#94A3B8;">Generating monthly insights...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <div class="modal-overlay" id="startModal" onclick="handleOverlayClick(event)">
+                <div class="modal-card">
+                    <div class="modal-handle"></div>
+                    <h3 style="margin-bottom:5px; font-size:22px; color:var(--text-main);">New Session</h3>
+                    <form onsubmit="handleStart(event)">
+                        <div class="input-group">
+                            <i data-lucide="book" size="20" style="color:var(--accent);"></i>
+                            <select id="inpSubject" required>
+                                <option value="" disabled selected hidden>Select Subject</option>
+                                <option>Mathematics</option>
+                                <option>Physics</option>
+                                <option>Computer Science</option>
+                                <option>Biology</option>
+                                <option>Chemistry</option>
+                                <option>History</option>
+                                <option>Civics</option>
+                                <option>Literature</option>
+                                <option>Geography</option>
+                                <option>Psychology</option>
+                                <option>Art</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <i data-lucide="users" size="20" style="color:var(--accent);"></i>
+                            <select id="inpClass" required>
+                                <option value="" disabled selected hidden>Select Class</option>
+                                <option>Class 9-A</option>
+                                <option>Class 9-B</option>
+                                <option>Class 10-A</option>
+                                <option>Class 10-B</option>
+                                <option>Class 11-A</option>
+                                <option>Class 11-B</option>
+                                <option>Class 12-A</option>
+                                <option>Class 12-B</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <i data-lucide="type" size="20" style="color:var(--accent);"></i>
+                            <input type="text" id="inpTopic" placeholder="Lesson Topic" autocomplete="off" required>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-text"><h4>Single Focus Mode</h4><p>Track class as one unit</p></div>
+                            <label class="toggle-switch"><input type="checkbox" id="inpSingleMode"><span class="slider"></span></label>
+                        </div>
+                        <button type="submit" class="primary-btn">Start Monitoring</button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <div class="modal-overlay" id="endModal" onclick="handleOverlayClick(event)">
-            <div class="modal-card" style="align-items: center; text-align: center; padding-bottom: 40px;">
-                <div class="modal-handle"></div>
-                <div style="width: 60px; height: 60px; border-radius: 50%; background: #FEE2E2; color: var(--status-red); display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-                    <i data-lucide="power" size="30"></i>
-                </div>
-                <h3 style="margin:0 0 10px 0; font-size:22px; color:var(--text-main);">End Session?</h3>
-                <p style="margin:0 0 25px 0; font-size:14px; color:var(--text-secondary);">Are you sure you want to end the live tracking?</p>
-                <div style="display: flex; gap: 15px; width: 100%;">
-                    <button type="button" onclick="closeEndModal()" style="flex:1; padding: 14px; background: #F1F5F9; color: #64748B; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer;">Cancel</button>
-                    <button type="button" onclick="confirmEndSession()" style="flex:1; padding: 14px; background: var(--status-red); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(248, 113, 113, 0.3);">End Lesson</button>
+            <div class="modal-overlay" id="endModal" onclick="handleOverlayClick(event)">
+                <div class="modal-card" style="align-items: center; text-align: center; padding-bottom: 40px;">
+                    <div class="modal-handle"></div>
+                    <div style="width: 60px; height: 60px; border-radius: 50%; background: #FEE2E2; color: var(--status-red); display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                        <i data-lucide="power" size="30"></i>
+                    </div>
+                    <h3 style="margin:0 0 10px 0; font-size:22px; color:var(--text-main);">End Session?</h3>
+                    <p style="margin:0 0 25px 0; font-size:14px; color:var(--text-secondary);">Are you sure you want to end the live tracking?</p>
+                    <div style="display: flex; gap: 15px; width: 100%;">
+                        <button type="button" onclick="closeEndModal()" style="flex:1; padding: 14px; background: #F1F5F9; color: #64748B; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer;">Cancel</button>
+                        <button type="button" onclick="confirmEndSession()" style="flex:1; padding: 14px; background: var(--status-red); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(248, 113, 113, 0.3);">End Lesson</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="modal-overlay" id="historyModal" onclick="handleOverlayClick(event)">
-            <div class="modal-card" style="height: 80vh;">
-                <div class="modal-handle"></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-shrink:0;">
-                    <h3 style="font-size:22px; color:var(--text-main); margin:0;">History</h3>
-                    <button onclick="closeHistoryModal()" style="border:none; background:none; cursor:pointer;"><i data-lucide="x"></i></button>
+            <div class="modal-overlay" id="historyModal" onclick="handleOverlayClick(event)">
+                <div class="modal-card" style="height: 80vh;">
+                    <div class="modal-handle"></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-shrink:0;">
+                        <h3 style="font-size:22px; color:var(--text-main); margin:0;">History</h3>
+                        <button onclick="closeHistoryModal()" style="border:none; background:none; cursor:pointer;"><i data-lucide="x"></i></button>
+                    </div>
+                    <div id="fullHistoryList"></div>
                 </div>
-                <div id="fullHistoryList"></div>
             </div>
-        </div>
 
-        <nav class="bottom-nav">
-            <button class="nav-item active" onclick="navTo('view-home')"><i data-lucide="layout-grid"></i><span>Home</span></button>
-            <button class="main-action-btn" id="mainActionBtn" onclick="handleMainAction()"><i data-lucide="plus" size="28"></i></button>
-            <button class="nav-item" onclick="navTo('view-chat')"><i data-lucide="message-square"></i><span>Chat</span></button>
-        </nav>
+            <div id="magicToast" class="magic-toast" dir="rtl"></div>
+
+            <nav class="bottom-nav">
+                <button class="nav-item active" onclick="navTo('view-home')"><i data-lucide="layout-grid"></i><span>Home</span></button>
+                <button class="main-action-btn" id="mainActionBtn" onclick="handleMainAction()"><i data-lucide="plus" size="28"></i></button>
+                <button class="nav-item" onclick="navTo('view-chat')"><i data-lucide="message-square"></i><span>Chat</span></button>
+            </nav>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
