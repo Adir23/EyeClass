@@ -1,46 +1,45 @@
 {
-    "timestamp": 1771403809.98119,
-    "date_str": "18/02 10:36",
+    "timestamp": 1771267244.118732,
+    "date_str": "16/02 20:40",
     "subject": "Civics",
     "topic": "Human Rights Law",
     "mode": "group",
-    "avg_attention": 84,
+    "avg_attention": 78,
     "blocks": [
         {
             "id": 0,
-            "attention": 92
+            "attention": 67
         },
         {
             "id": 1,
-            "attention": 99
+            "attention": 63
         },
         {
             "id": 2,
-            "attention": 83
-        },
-        {
-            "id": 3,
-            "attention": 69
-        },
-        {
-            "id": 4,
             "attention": 82
         },
         {
+            "id": 3,
+            "attention": 78
+        },
+        {
+            "id": 4,
+            "attention": 87
+        },
+        {
             "id": 5,
-            "attention": 97
+            "attention": 75
         }
     ],
     "attention_time": [
-        90,
-        94,
-        82,
-        77,
-        76,
-        75
+        83,
+        75,
+        80,
+        71,
+        69,
+        81
     ],
     "suggestions": [
-        "Great tone and enthusiasm.",
         "Excellent student participation!",
         "High engagement throughout the lesson."
     ]

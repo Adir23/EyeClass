@@ -15,10 +15,10 @@
             <div class="header-row" id="homeHeader">
                 <div class="user-greeting">
                     <p>Good Morning,</p>
-                    <h1>Sarah</h1>
+                    <h1 style="font-size: 22px;">Tamar Illuz</h1>
                 </div>
                 <div class="avatar">
-                    <img src="https://i.pravatar.cc/100?img=5" alt="User">
+                    <i data-lucide="user" size="24"></i>
                 </div>
             </div>
 
@@ -29,14 +29,14 @@
                     </p>
                     <h1 id="liveSubjectTitle">Math</h1>
                 </div>
-                <button id="powerBtn" onclick="endSession()" style="background:white; border:none; width:40px; height:40px; border-radius:50%; color:var(--status-red); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                <button id="powerBtn" onclick="openEndModal()" style="background:white; border:none; width:40px; height:40px; border-radius:50%; color:var(--status-red); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); cursor:pointer;">
                     <i data-lucide="power" size="20"></i>
                 </button>
             </div>
 
             <div class="header-row" id="chatHeader" style="display:none; justify-content:center;">
                 <div style="text-align:center;">
-                    <h1 style="font-size:18px; color:var(--text-main);">Gemini Assistant</h1>
+                    <h1 style="font-size:18px; color:var(--text-main);">EyeClass Assistant</h1>
                     <p style="font-size:12px; color:var(--text-secondary);">Online</p>
                 </div>
             </div>
@@ -69,7 +69,7 @@
 
                 <div class="section-header" style="flex-shrink:0;">
                     <span class="section-title">Recent Sessions</span>
-                    <span style="font-size:12px; color:var(--text-secondary); cursor:pointer; font-weight:600;" onclick="openHistoryModal()">See All</span>
+                    <span id="seeAllBtn" style="font-size:12px; color:var(--text-secondary); cursor:pointer; font-weight:600;" onclick="openHistoryModal()">See All</span>
                 </div>
 
                 <div class="recent-list" id="recentSessionList">
@@ -79,7 +79,7 @@
 
             <section id="view-dashboard" class="view-section">
                 <div class="heatmap-container">
-                    <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:5px;">
                         <h4 style="color:var(--text-secondary); font-size:13px;">Class Map</h4>
                         <i data-lucide="users" size="14" style="color:var(--accent);"></i>
                     </div>
@@ -89,8 +89,8 @@
                     <h4 style="color:var(--text-secondary); font-size:13px; margin-bottom:5px;">Engagement Trend</h4>
                     <div style="flex:1; width:100%; position:relative;"><canvas id="lineChart"></canvas></div>
                 </div>
-                <div class="card">
-                    <h4 style="color:var(--text-secondary); font-size:13px; margin-bottom:8px;">AI Insights</h4>
+                <div class="card analysis-card">
+                    <h4 style="color:var(--text-secondary); font-size:13px; margin-bottom:5px;">AI Insights</h4>
                     <div id="aiSuggestionsList"></div>
                 </div>
             </section>
@@ -99,18 +99,18 @@
                 <div class="chat-container" id="chatContainer">
                     <div class="message ai">
                         <div class="avatar-small"><i data-lucide="bot" size="16"></i></div>
-                        <div class="bubble">Hello! I'm your teaching assistant.</div>
+                        <div class="bubble" dir="rtl" style="text-align: right;">היי! אני עוזר ההוראה שלך. איך אפשר לעזור בשיעור היום?</div>
                     </div>
                 </div>
-                <div class="chat-input-wrapper">
-                    <textarea id="chatInput" rows="1" placeholder="Ask Gemini..." onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+                <div class="chat-input-wrapper" dir="rtl">
+                    <textarea id="chatInput" rows="1" placeholder="הקלד הודעה..." onkeydown="handleEnter(event)" oninput="autoResize(this)" style="text-align: right;"></textarea>
                     <button class="chat-send-btn" onclick="sendMessage()"><i data-lucide="send" size="18"></i></button>
                 </div>
             </section>
 
             <section id="view-monthly" class="view-section" style="padding: 0; background: var(--bg-app); display:flex; flex-direction:column;">
                 <div class="weekly-header-container">
-                    <div style="display:flex; align-items:center; justify-content:space-between; padding: 15px 20px 0;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 20px 0;">
                         <button onclick="navTo('view-home')" style="background:white; border:none; width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.05); color:var(--text-main);">
                             <i data-lucide="arrow-left" size="18"></i>
                         </button>
@@ -140,7 +140,7 @@
                     </div>
                 </div>
 
-                <div class="weekly-content" style="flex:1; padding: 15px 20px; overflow-y: auto;">
+                <div class="weekly-content" id="weeklyScrollArea">
                     <div id="tab-overview" class="tab-pane active">
                         <div class="metrics-grid-2x2">
                             <div class="metric-box">
@@ -173,9 +173,9 @@
                                 <button class="icon-btn" onclick="nextGraph()"><i data-lucide="chevron-right"></i></button>
                             </div>
                             <div class="carousel-content">
-                                <div class="chart-slide active" id="slide-1"><canvas id="chart1" style="width:100%; height:100%;"></canvas></div>
-                                <div class="chart-slide" id="slide-2"><canvas id="chart2" style="width:100%; height:100%;"></canvas></div>
-                                <div class="chart-slide" id="slide-3"><canvas id="chart3" style="width:100%; height:100%;"></canvas></div>
+                                <div class="chart-slide active" id="slide-1"><canvas id="chart1"></canvas></div>
+                                <div class="chart-slide" id="slide-2"><canvas id="chart2"></canvas></div>
+                                <div class="chart-slide" id="slide-3"><canvas id="chart3"></canvas></div>
                             </div>
                             <div class="carousel-dots">
                                 <div class="dot active" id="dot-1"></div>
@@ -185,7 +185,7 @@
                         </div>
                     </div>
                     <div id="tab-insights" class="tab-pane" style="display:none;">
-                         <div class="card" style="background:white; border:none; box-shadow:var(--shadow-soft);">
+                         <div class="card" style="background:white; border:none; box-shadow:var(--shadow-soft); border-radius: 24px; padding: 20px; height: auto; flex: 1; max-height: 350px;">
                             <div style="display:flex; gap:12px; margin-bottom:15px; align-items:center;">
                                 <div class="avatar-small" style="background:var(--bg-app); color:var(--primary);"><i data-lucide="sparkles" size="18"></i></div>
                                 <h4 style="margin:0; align-self:center; color:var(--text-main);">Gemini Analysis</h4>
@@ -204,9 +204,41 @@
                 <div class="modal-handle"></div>
                 <h3 style="margin-bottom:5px; font-size:22px; color:var(--text-main);">New Session</h3>
                 <form onsubmit="handleStart(event)">
-                    <div class="input-group"><i data-lucide="book" size="20" style="color:var(--accent);"></i><select id="inpSubject"><option>Mathematics</option><option>History</option><option>Science</option></select></div>
-                    <div class="input-group"><i data-lucide="users" size="20" style="color:var(--accent);"></i><select id="inpClass"><option>Class 9-A</option><option>Class 10-B</option></select></div>
-                    <div class="input-group"><i data-lucide="type" size="20" style="color:var(--accent);"></i><input type="text" id="inpTopic" placeholder="Topic" required></div>
+                    <div class="input-group">
+                        <i data-lucide="book" size="20" style="color:var(--accent);"></i>
+                        <select id="inpSubject" required>
+                            <option value="" disabled selected hidden>Select Subject</option>
+                            <option>Mathematics</option>
+                            <option>Physics</option>
+                            <option>Computer Science</option>
+                            <option>Biology</option>
+                            <option>Chemistry</option>
+                            <option>History</option>
+                            <option>Civics</option>
+                            <option>Literature</option>
+                            <option>Geography</option>
+                            <option>Psychology</option>
+                            <option>Art</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i data-lucide="users" size="20" style="color:var(--accent);"></i>
+                        <select id="inpClass" required>
+                            <option value="" disabled selected hidden>Select Class</option>
+                            <option>Class 9-A</option>
+                            <option>Class 9-B</option>
+                            <option>Class 10-A</option>
+                            <option>Class 10-B</option>
+                            <option>Class 11-A</option>
+                            <option>Class 11-B</option>
+                            <option>Class 12-A</option>
+                            <option>Class 12-B</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i data-lucide="type" size="20" style="color:var(--accent);"></i>
+                        <input type="text" id="inpTopic" placeholder="Lesson Topic" autocomplete="off" required>
+                    </div>
                     <div class="toggle-row">
                         <div class="toggle-text"><h4>Single Focus Mode</h4><p>Track class as one unit</p></div>
                         <label class="toggle-switch"><input type="checkbox" id="inpSingleMode"><span class="slider"></span></label>
@@ -216,12 +248,27 @@
             </div>
         </div>
 
+        <div class="modal-overlay" id="endModal" onclick="handleOverlayClick(event)">
+            <div class="modal-card" style="align-items: center; text-align: center; padding-bottom: 40px;">
+                <div class="modal-handle"></div>
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: #FEE2E2; color: var(--status-red); display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                    <i data-lucide="power" size="30"></i>
+                </div>
+                <h3 style="margin:0 0 10px 0; font-size:22px; color:var(--text-main);">End Session?</h3>
+                <p style="margin:0 0 25px 0; font-size:14px; color:var(--text-secondary);">Are you sure you want to end the live tracking?</p>
+                <div style="display: flex; gap: 15px; width: 100%;">
+                    <button type="button" onclick="closeEndModal()" style="flex:1; padding: 14px; background: #F1F5F9; color: #64748B; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer;">Cancel</button>
+                    <button type="button" onclick="confirmEndSession()" style="flex:1; padding: 14px; background: var(--status-red); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(248, 113, 113, 0.3);">End Lesson</button>
+                </div>
+            </div>
+        </div>
+
         <div class="modal-overlay" id="historyModal" onclick="handleOverlayClick(event)">
             <div class="modal-card" style="height: 80vh;">
                 <div class="modal-handle"></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                    <h3 style="font-size:22px; color:var(--text-main);">History</h3>
-                    <button onclick="closeHistoryModal()" style="border:none; background:none;"><i data-lucide="x"></i></button>
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; flex-shrink:0;">
+                    <h3 style="font-size:22px; color:var(--text-main); margin:0;">History</h3>
+                    <button onclick="closeHistoryModal()" style="border:none; background:none; cursor:pointer;"><i data-lucide="x"></i></button>
                 </div>
                 <div id="fullHistoryList"></div>
             </div>

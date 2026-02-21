@@ -1,47 +1,47 @@
 {
-    "timestamp": 1769910610.942686,
-    "date_str": "01/02 03:50",
+    "timestamp": 1770041768.92067,
+    "date_str": "02/02 16:16",
     "subject": "Chemistry",
     "topic": "Thermodynamics",
     "mode": "group",
-    "avg_attention": 43,
+    "avg_attention": 21,
     "blocks": [
         {
             "id": 0,
-            "attention": 55
+            "attention": 7
         },
         {
             "id": 1,
-            "attention": 51
+            "attention": 32
         },
         {
             "id": 2,
-            "attention": 39
+            "attention": 35
         },
         {
             "id": 3,
-            "attention": 36
+            "attention": 32
         },
         {
             "id": 4,
-            "attention": 43
+            "attention": 12
         },
         {
             "id": 5,
-            "attention": 49
+            "attention": 29
         }
     ],
     "attention_time": [
-        35,
-        47,
-        49,
-        48,
-        42,
-        40
+        24,
+        30,
+        18,
+        31,
+        30,
+        12
     ],
     "suggestions": [
+        "Speak a bit louder and move around the room.",
         "Allocate more time for guided practice.",
-        "Energy dropped significantly; try an interactive activity.",
-        "Pause longer for Q&A to clarify concepts."
+        "Energy dropped significantly; try an interactive activity."
     ]
 }

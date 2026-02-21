@@ -1,0 +1,47 @@
+{
+    "timestamp": 1771073269.391587,
+    "date_str": "14/02 14:47",
+    "subject": "English",
+    "topic": "Creative Writing Workshop",
+    "mode": "group",
+    "avg_attention": 80,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 91
+        },
+        {
+            "id": 1,
+            "attention": 66
+        },
+        {
+            "id": 2,
+            "attention": 77
+        },
+        {
+            "id": 3,
+            "attention": 75
+        },
+        {
+            "id": 4,
+            "attention": 78
+        },
+        {
+            "id": 5,
+            "attention": 95
+        }
+    ],
+    "attention_time": [
+        80,
+        90,
+        86,
+        76,
+        87,
+        71
+    ],
+    "suggestions": [
+        "The class tracked complex concepts well.",
+        "Great tone and enthusiasm.",
+        "High engagement throughout the lesson."
+    ]
+}

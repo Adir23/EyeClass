@@ -15,28 +15,159 @@ os.makedirs(JSON_FOLDER, exist_ok=True)
 
 # Set to True to use real Gemini API, False for simulation
 ENABLE_AI = False
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY = "AIzaSyAxLyraUwHiY8Wk6hOjcjRPPq1sJ3YZ4RM"
 
 has_ai = False
 if ENABLE_AI and GEMINI_API_KEY:
     try:
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('models/gemini-1.5-flash')
+        model = genai.GenerativeModel('models/gemini-2.5-flash')
         has_ai = True
-        print("✅ Gemini AI Connected")
-    except:
-        print("⚠️ AI Connection Failed")
+        print("AI ENABLED")
+    except Exception as e:
+        print(f"AI CONNECTION FAILED: {e}")
+else:
+    print("AI DISABLED")
 
 
-# --- DATA GENERATION ---
-def generate_lesson_snapshot(mode="group"):
-    # Single vs Group Logic
-    if mode == "single":
-        blocks = [{"id": 0, "attention": random.randint(50, 100)}]
+# --- SMART DATA GENERATION ---
+def generate_smart_suggestions(mode, blocks, avg_att, is_live):
+    suggestions = []
+
+    if is_live:
+        if mode == "single":
+            if avg_att >= 80:
+                pool = [
+                    "The student is highly focused.",
+                    "Perfect pacing, keep it up!",
+                    "Great eye contact and engagement.",
+                    "The material seems to resonate well.",
+                    "Excellent momentum in the session."
+                ]
+            elif avg_att >= 60:
+                pool = [
+                    "Attention is slightly fluctuating.",
+                    "Consider asking a direct question to re-engage.",
+                    "A quick interactive task might help.",
+                    "Pacing is okay, but check comprehension.",
+                    "Try connecting the topic to a real-world example."
+                ]
+            else:
+                pool = [
+                    "The student seems distracted.",
+                    "Try switching to a visual explanation.",
+                    "Consider taking a 2-minute stretch break.",
+                    "Check if the difficulty level is appropriate.",
+                    "Change the current activity to regain focus."
+                ]
+            suggestions = random.sample(pool, 3)
+        else:
+            if avg_att >= 80:
+                pool1 = ["Overall class engagement is excellent!", "High energy in the room today.",
+                         "Students are tracking perfectly."]
+                pool2 = ["Great time to introduce complex concepts.",
+                         "The current teaching method is highly effective.", "Perfect atmosphere for group discussion."]
+            elif avg_att >= 60:
+                pool1 = ["Class attention is moderate.", "Engagement is okay, but could be better.",
+                         "Energy levels are starting to dip."]
+                pool2 = ["Keep the energy up with a quick question.", "Try adding a short visual aid.",
+                         "Consider slightly faster pacing."]
+            else:
+                pool1 = ["General focus is quite low.", "Many students seem distracted.",
+                         "Attention has dropped significantly."]
+                pool2 = ["Consider a quick stretch break.", "Change the activity immediately.",
+                         "Switch from lecture to interactive mode."]
+
+            suggestions.append(random.choice(pool1))
+
+            lowest_block = min(blocks, key=lambda b: b['attention'])
+            if lowest_block['attention'] < 60:
+                if lowest_block['id'] < 2:
+                    zone = "front row"
+                elif lowest_block['id'] < 4:
+                    zone = "middle rows"
+                else:
+                    zone = "back row"
+
+                zone_pool = [
+                    f"The {zone} is losing focus. Try walking towards them.",
+                    f"Direct a question to the {zone} to re-engage them.",
+                    f"Eye contact is dropping in the {zone}."
+                ]
+                suggestions.append(random.choice(zone_pool))
+            else:
+                good_zone_pool = [
+                    "All rows are maintaining steady focus.",
+                    "No specific weak spots detected in the class.",
+                    "Even the back rows are highly engaged."
+                ]
+                suggestions.append(random.choice(good_zone_pool))
+
+            while len(suggestions) < 3:
+                cand = random.choice(pool2)
+                if cand not in suggestions:
+                    suggestions.append(cand)
     else:
-        blocks = [{"id": i, "attention": random.randint(40, 98)} for i in range(6)]
+        if mode == "single":
+            if avg_att >= 75:
+                pool = [
+                    "A very successful 1-on-1 session.",
+                    "The visual examples worked perfectly.",
+                    "Student maintained strong focus throughout.",
+                    "Good pacing and clear explanations.",
+                    "Replicate this structure for future sessions."
+                ]
+            else:
+                pool = [
+                    "Engagement was below average.",
+                    "Next time, try adding interactive tasks.",
+                    "Consider breaking theory into smaller chunks.",
+                    "Attention dropped in the second half.",
+                    "Ask more questions to gauge understanding early."
+                ]
+            suggestions = random.sample(pool, 3)
+        else:
+            if avg_att >= 80:
+                pool = [
+                    "Excellent overall class engagement.",
+                    "Group activity was highly effective.",
+                    "Replicate this lesson structure next time.",
+                    "High participation rates recorded.",
+                    "Visuals kept the class highly focused."
+                ]
+            else:
+                pool = [
+                    "Engagement dropped during theoretical parts.",
+                    "Consider shorter lecture segments.",
+                    "More interactive elements recommended next time.",
+                    "Back rows showed lower participation.",
+                    "Try adding a mid-lesson break next time."
+                ]
+            suggestions = random.sample(pool, 3)
+
+    return suggestions[:3]
+
+
+def generate_lesson_snapshot(mode="group", is_live=True):
+    if mode == "single":
+        blocks = [{"id": 0, "attention": random.randint(40, 100)}]
+    else:
+        blocks = [{"id": i, "attention": random.randint(35, 98)} for i in range(6)]
 
     avg_att = sum(b['attention'] for b in blocks) // len(blocks)
+
+    session["current_avg_attention"] = avg_att
+
+    if is_live:
+        history = session.get("attention_history", [65, 70, 75, 80, 85])
+        history.append(avg_att)
+        history = history[-6:]
+        session["attention_history"] = history
+        chart_data = history
+    else:
+        chart_data = [random.randint(55, 95) for _ in range(5)] + [avg_att]
+
+    suggestions = generate_smart_suggestions(mode, blocks, avg_att, is_live)
 
     return {
         "timestamp": time.time(),
@@ -46,12 +177,8 @@ def generate_lesson_snapshot(mode="group"):
         "mode": mode,
         "avg_attention": avg_att,
         "blocks": blocks,
-        "attention_time": [random.randint(60, 95) for _ in range(6)],
-        "suggestions": [
-            "Check the back row.",
-            "Great energy!",
-            "Pause for questions."
-        ]
+        "attention_time": chart_data,
+        "suggestions": suggestions
     }
 
 
@@ -69,6 +196,10 @@ def start_lesson():
     session["subject"] = data.get("subject")
     session["lesson_topic"] = data.get("topic")
     session["mode"] = data.get("mode", "group")
+
+    session["attention_history"] = [70, 75, 80, 85, 90, 95]
+    session["current_avg_attention"] = 100
+
     return jsonify({"status": "success"})
 
 
@@ -78,12 +209,13 @@ def get_dashboard_data():
     file_id = request.args.get('file_id')
 
     if not is_history and "subject" in session:
-        # Live Data
-        data = generate_lesson_snapshot(session.get("mode", "group"))
+        data = generate_lesson_snapshot(session.get("mode", "group"), is_live=True)
     else:
-        # History Data
         files = sorted(glob.glob(os.path.join(JSON_FOLDER, "*.json")), key=os.path.getmtime, reverse=True)
-        if not files: return jsonify({"error": "No data"}), 404
+
+        if not files:
+            mock_data = generate_lesson_snapshot("group", is_live=False)
+            return jsonify({"data": mock_data})
 
         target_file = files[0]
         if file_id:
@@ -92,7 +224,6 @@ def get_dashboard_data():
                     target_file = f
                     break
 
-        # Added Error Handling to prevent crashes on corrupted JSON
         try:
             with open(target_file, "r") as f:
                 data = json.load(f)
@@ -107,6 +238,7 @@ def get_dashboard_data():
 def get_history_list():
     files = sorted(glob.glob(os.path.join(JSON_FOLDER, "*.json")), key=os.path.getmtime, reverse=True)
     history = []
+
     for f in files:
         try:
             with open(f, "r") as reader:
@@ -120,45 +252,104 @@ def get_history_list():
                 })
         except:
             continue
+
+    if not history:
+        history = [
+            {"id": "1", "subject": "Psychology", "date": "16/02 12:55", "score": 94, "mode": "group"},
+            {"id": "2", "subject": "History", "date": "16/02 14:11", "score": 62, "mode": "single"},
+            {"id": "3", "subject": "Civics", "date": "18/02 10:36", "score": 84, "mode": "group"}
+        ]
+
     return jsonify(history)
 
 
 @app.route("/api/monthly_insights")
 def get_monthly_insights():
     return jsonify({
-        "text": "Monthly Analysis: Engagement is up 15% compared to last month. Science classes show the highest improvement."
+        "text": "Monthly Analysis: Engagement is up 8% compared to last month. Science classes show the highest improvement, while History might need more visual aids."
     })
 
 
 @app.route("/api/chat", methods=["POST"])
 def chat():
     user_msg = request.json.get("message", "")
-    
-    # Grab current lesson context (if active)
-    current_subject = session.get("subject", "general education")
-    current_topic = session.get("lesson_topic", "general topics")
-    
+
+    current_subject = session.get("subject", "None")
+    current_topic = session.get("lesson_topic", "None")
+    is_live = "subject" in session
+
+    app_context = ""
+    if is_live:
+        current_avg = session.get("current_avg_attention", "N/A")
+        app_context = f"The teacher is currently in a LIVE LESSON. Subject: {current_subject}. Topic: {current_topic}. Current class attention average is {current_avg}%."
+    else:
+        files = sorted(glob.glob(os.path.join(JSON_FOLDER, "*.json")), key=os.path.getmtime, reverse=True)[:3]
+        hist_str = ""
+        for f in files:
+            try:
+                with open(f, 'r') as r:
+                    d = json.load(r)
+                    hist_str += f"[{d.get('subject')} - Score: {d.get('avg_attention')}%] "
+            except:
+                pass
+
+        if not hist_str:
+            hist_str = "No recent sessions available."
+
+        app_context = f"The teacher is NOT in a live lesson right now. Recent lessons history: {hist_str}."
+
     if has_ai:
         try:
-            # Inject context into the prompt
             prompt = f"""
-            You are an expert teaching assistant app called EyeClass. 
-            The teacher is currently teaching a lesson on {current_subject} (Topic: {current_topic}).
-            Keep your answers very brief, practical, and tailored to this specific subject.
-            
+            You are the EyeClass AI Assistant. 
+
+            CRITICAL RULES:
+            1. LANGUAGE: You MUST reply ONLY in Hebrew (עברית). Never use English. Do not introduce yourself with a specific name.
+            2. TONE & LENGTH: Be conversational, friendly, direct, and very short. Keep your answer to 1-3 sentences maximum. Do not use bullet points. Do not be annoying or overly formal.
+            3. CONTEXT: Use the following app data to answer questions about the class state if relevant:
+            --- APP DATA CONTEXT ---
+            {app_context}
+            ------------------------
+            4. OFF-TOPIC: If asked about things unrelated to education or the EyeClass app (like recipes, sports), politely say in Hebrew that you are an educational assistant and offer to help with the lesson instead.
+            5. No need to greet the user each time
+
             Teacher says: {user_msg}
             """
             response = model.generate_content(prompt)
             return jsonify({"reply": response.text})
         except Exception as e:
             print(f"Gemini API Error: {e}")
-            return jsonify({"reply": "AI Error. Please try again."})
-            
-    return jsonify({"reply": "AI is disabled. Set ENABLE_AI = True and check your API key."})
+            return jsonify(
+                {"reply": "יש בעיה בחיבור לשרת כרגע, אנא נסה שוב מאוחר יותר."})
+
+    # במקרה שאין חיבור ל-API - הודעות תורגמו לעברית
+    if is_live:
+        if any(word in user_msg for word in ["ריכוז", "קשב", "ישנים", "משעמם", "עזרה"]):
+            reply = f"לפי הנתונים של שיעור {current_subject}, אני ממליץ לעשות הפסקה קצרה או לשאול שאלה כדי להחזיר את הריכוז."
+        elif any(word in user_msg for word in ["טוב", "מעולה", "מצוין", "יופי"]):
+            reply = "הנתונים מסכימים איתך! רמת הקשב נראית מצוין כרגע."
+        else:
+            reply = f"אני עוקב אחרי שיעור {current_subject} בלייב. הקשב עומד על {session.get('current_avg_attention', 'N/A')}%. איך אפשר לעזור?"
+    else:
+        if any(word in user_msg for word in ["סיכום", "אחרון", "היסטוריה", "עבר"]):
+            reply = "מבט על השיעורים האחרונים מראה שעבודה בקבוצות העלתה את הקשב ב-15% בממוצע."
+        else:
+            reply = "אנחנו כרגע לא בשיעור חי. אפשר להתחיל שיעור כדי לקבל משוב בזמן אמת, או לשאול אותי על שיעורי עבר."
+
+    return jsonify({"reply": reply})
 
 
 @app.route("/api/end_lesson", methods=["POST"])
 def end_lesson():
+    if "subject" in session:
+        data = generate_lesson_snapshot(session.get("mode", "group"), is_live=False)
+        filename = os.path.join(JSON_FOLDER, f"session_{int(data['timestamp'])}.json")
+        try:
+            with open(filename, "w") as f:
+                json.dump(data, f)
+        except Exception as e:
+            print(f"Failed to save session: {e}")
+
     session.clear()
     return jsonify({"status": "cleared"})
 

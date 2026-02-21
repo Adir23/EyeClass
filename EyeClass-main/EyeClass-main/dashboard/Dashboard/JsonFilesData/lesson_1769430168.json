@@ -1,0 +1,46 @@
+{
+    "timestamp": 1769430168.991226,
+    "date_str": "26/01 14:22",
+    "subject": "Civics",
+    "topic": "Human Rights Law",
+    "mode": "group",
+    "avg_attention": 26,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 29
+        },
+        {
+            "id": 1,
+            "attention": 17
+        },
+        {
+            "id": 2,
+            "attention": 34
+        },
+        {
+            "id": 3,
+            "attention": 38
+        },
+        {
+            "id": 4,
+            "attention": 36
+        },
+        {
+            "id": 5,
+            "attention": 34
+        }
+    ],
+    "attention_time": [
+        21,
+        23,
+        24,
+        33,
+        21,
+        22
+    ],
+    "suggestions": [
+        "Pause longer for Q&A to clarify concepts.",
+        "Allocate more time for guided practice."
+    ]
+}

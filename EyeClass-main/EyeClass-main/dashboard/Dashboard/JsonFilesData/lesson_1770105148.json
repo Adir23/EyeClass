@@ -1,10 +1,10 @@
 {
-    "timestamp": 1770560270.379771,
-    "date_str": "08/02 16:17",
+    "timestamp": 1770105148.130421,
+    "date_str": "03/02 09:52",
     "subject": "Civics",
     "topic": "Human Rights Law",
     "mode": "group",
-    "avg_attention": 52,
+    "avg_attention": 55,
     "blocks": [
         {
             "id": 0,
@@ -12,7 +12,7 @@
         },
         {
             "id": 1,
-            "attention": 50
+            "attention": 67
         },
         {
             "id": 2,
@@ -20,28 +20,27 @@
         },
         {
             "id": 3,
-            "attention": 38
+            "attention": 56
         },
         {
             "id": 4,
-            "attention": 44
+            "attention": 46
         },
         {
             "id": 5,
-            "attention": 49
+            "attention": 54
         }
     ],
     "attention_time": [
-        55,
-        60,
-        56,
-        42,
-        60,
-        50
+        63,
+        54,
+        48,
+        62,
+        53,
+        47
     ],
     "suggestions": [
         "Summarize key takeaways to recenter the class.",
-        "Call on specific students to increase focus.",
-        "Use a quick poll to check for understanding."
+        "Call on specific students to increase focus."
     ]
 }

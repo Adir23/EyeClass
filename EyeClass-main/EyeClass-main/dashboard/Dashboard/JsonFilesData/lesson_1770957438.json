@@ -1,0 +1,27 @@
+{
+    "timestamp": 1770957438.938943,
+    "date_str": "13/02 06:37",
+    "subject": "Computer Science",
+    "topic": "Data Structures",
+    "mode": "single",
+    "avg_attention": 69,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 69
+        }
+    ],
+    "attention_time": [
+        63,
+        59,
+        68,
+        73,
+        79,
+        74
+    ],
+    "suggestions": [
+        "Provide more real-world examples.",
+        "Summarize key takeaways to recenter the class.",
+        "Do a quick live-coding walkthrough."
+    ]
+}
