@@ -1,0 +1,47 @@
+{
+    "timestamp": 1769466073.138372,
+    "date_str": "27/01 00:21",
+    "subject": "Psychology",
+    "topic": "Cognitive Biases",
+    "mode": "group",
+    "avg_attention": 89,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 85
+        },
+        {
+            "id": 1,
+            "attention": 87
+        },
+        {
+            "id": 2,
+            "attention": 92
+        },
+        {
+            "id": 3,
+            "attention": 100
+        },
+        {
+            "id": 4,
+            "attention": 94
+        },
+        {
+            "id": 5,
+            "attention": 81
+        }
+    ],
+    "attention_time": [
+        95,
+        83,
+        80,
+        93,
+        88,
+        92
+    ],
+    "suggestions": [
+        "The class tracked complex concepts well.",
+        "Excellent student participation!",
+        "Perfect use of visual aids."
+    ]
+}

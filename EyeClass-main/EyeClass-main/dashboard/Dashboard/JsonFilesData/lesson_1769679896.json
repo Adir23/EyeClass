@@ -1,0 +1,47 @@
+{
+    "timestamp": 1769679896.896858,
+    "date_str": "29/01 11:44",
+    "subject": "English",
+    "topic": "Creative Writing Workshop",
+    "mode": "group",
+    "avg_attention": 58,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 61
+        },
+        {
+            "id": 1,
+            "attention": 70
+        },
+        {
+            "id": 2,
+            "attention": 63
+        },
+        {
+            "id": 3,
+            "attention": 32
+        },
+        {
+            "id": 4,
+            "attention": 68
+        },
+        {
+            "id": 5,
+            "attention": 55
+        }
+    ],
+    "attention_time": [
+        54,
+        58,
+        54,
+        62,
+        59,
+        61
+    ],
+    "suggestions": [
+        "Provide more real-world examples.",
+        "Try a quick 'think-pair-share' activity.",
+        "Summarize key takeaways to recenter the class."
+    ]
+}

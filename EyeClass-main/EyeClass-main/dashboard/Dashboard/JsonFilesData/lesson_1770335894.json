@@ -1,0 +1,46 @@
+{
+    "timestamp": 1770335894.038521,
+    "date_str": "06/02 01:58",
+    "subject": "Psychology",
+    "topic": "Cognitive Biases",
+    "mode": "group",
+    "avg_attention": 81,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 89
+        },
+        {
+            "id": 1,
+            "attention": 91
+        },
+        {
+            "id": 2,
+            "attention": 91
+        },
+        {
+            "id": 3,
+            "attention": 88
+        },
+        {
+            "id": 4,
+            "attention": 51
+        },
+        {
+            "id": 5,
+            "attention": 77
+        }
+    ],
+    "attention_time": [
+        91,
+        79,
+        74,
+        83,
+        77,
+        83
+    ],
+    "suggestions": [
+        "Excellent student participation!",
+        "Great pacing today!"
+    ]
+}

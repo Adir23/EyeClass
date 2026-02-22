@@ -1,0 +1,46 @@
+{
+    "timestamp": 1771493090.010419,
+    "date_str": "19/02 11:24",
+    "subject": "Chemistry",
+    "topic": "Thermodynamics",
+    "mode": "group",
+    "avg_attention": 51,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 51
+        },
+        {
+            "id": 1,
+            "attention": 41
+        },
+        {
+            "id": 2,
+            "attention": 53
+        },
+        {
+            "id": 3,
+            "attention": 60
+        },
+        {
+            "id": 4,
+            "attention": 47
+        },
+        {
+            "id": 5,
+            "attention": 59
+        }
+    ],
+    "attention_time": [
+        50,
+        61,
+        51,
+        41,
+        58,
+        59
+    ],
+    "suggestions": [
+        "Call on specific students to increase focus.",
+        "Check back row engagement."
+    ]
+}

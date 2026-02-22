@@ -1,46 +1,47 @@
 {
-    "timestamp": 1769430168.991226,
-    "date_str": "26/01 14:22",
-    "subject": "Civics",
-    "topic": "Human Rights Law",
+    "timestamp": 1770284640.993785,
+    "date_str": "05/02 11:44",
+    "subject": "English",
+    "topic": "Creative Writing Workshop",
     "mode": "group",
-    "avg_attention": 26,
+    "avg_attention": 42,
     "blocks": [
         {
             "id": 0,
-            "attention": 29
+            "attention": 55
         },
         {
             "id": 1,
-            "attention": 17
+            "attention": 39
         },
         {
             "id": 2,
-            "attention": 34
-        },
-        {
-            "id": 3,
-            "attention": 38
-        },
-        {
-            "id": 4,
             "attention": 36
         },
         {
+            "id": 3,
+            "attention": 47
+        },
+        {
+            "id": 4,
+            "attention": 39
+        },
+        {
             "id": 5,
-            "attention": 34
+            "attention": 38
         }
     ],
     "attention_time": [
-        21,
-        23,
-        24,
-        33,
-        21,
-        22
+        51,
+        36,
+        48,
+        47,
+        43,
+        33
     ],
     "suggestions": [
         "Pause longer for Q&A to clarify concepts.",
+        "Students seem confused, try simplifying.",
         "Allocate more time for guided practice."
     ]
 }

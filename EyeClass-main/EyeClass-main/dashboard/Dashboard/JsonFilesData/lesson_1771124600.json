@@ -1,0 +1,26 @@
+{
+    "timestamp": 1771124600.700857,
+    "date_str": "15/02 05:03",
+    "subject": "Geography",
+    "topic": "Climate Change Impacts",
+    "mode": "single",
+    "avg_attention": 98,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 98
+        }
+    ],
+    "attention_time": [
+        99,
+        100,
+        100,
+        90,
+        100,
+        93
+    ],
+    "suggestions": [
+        "High engagement throughout the lesson.",
+        "Great tone and enthusiasm."
+    ]
+}

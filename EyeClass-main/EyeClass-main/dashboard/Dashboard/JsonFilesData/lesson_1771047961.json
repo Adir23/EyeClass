@@ -1,0 +1,47 @@
+{
+    "timestamp": 1771047961.532928,
+    "date_str": "14/02 07:46",
+    "subject": "Mathematics",
+    "topic": "Calculus: Derivatives",
+    "mode": "group",
+    "avg_attention": 70,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 83
+        },
+        {
+            "id": 1,
+            "attention": 84
+        },
+        {
+            "id": 2,
+            "attention": 74
+        },
+        {
+            "id": 3,
+            "attention": 54
+        },
+        {
+            "id": 4,
+            "attention": 67
+        },
+        {
+            "id": 5,
+            "attention": 61
+        }
+    ],
+    "attention_time": [
+        74,
+        78,
+        66,
+        80,
+        69,
+        61
+    ],
+    "suggestions": [
+        "Summarize key takeaways to recenter the class.",
+        "Check back row engagement.",
+        "Provide more real-world examples."
+    ]
+}

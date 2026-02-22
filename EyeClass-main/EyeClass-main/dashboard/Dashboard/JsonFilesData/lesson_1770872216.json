@@ -1,18 +1,18 @@
 {
-    "timestamp": 1770162753.518153,
-    "date_str": "04/02 01:52",
+    "timestamp": 1770872216.154134,
+    "date_str": "12/02 06:56",
     "subject": "English",
     "topic": "Creative Writing Workshop",
     "mode": "group",
-    "avg_attention": 95,
+    "avg_attention": 87,
     "blocks": [
         {
             "id": 0,
-            "attention": 100
+            "attention": 97
         },
         {
             "id": 1,
-            "attention": 86
+            "attention": 76
         },
         {
             "id": 2,
@@ -20,27 +20,27 @@
         },
         {
             "id": 3,
-            "attention": 94
+            "attention": 92
         },
         {
             "id": 4,
-            "attention": 100
+            "attention": 88
         },
         {
             "id": 5,
-            "attention": 97
+            "attention": 80
         }
     ],
     "attention_time": [
-        85,
-        92,
-        93,
-        89,
-        100,
-        100
+        79,
+        94,
+        95,
+        94,
+        88,
+        77
     ],
     "suggestions": [
-        "Perfect use of visual aids.",
-        "Great pacing today!"
+        "Great pacing today!",
+        "Great tone and enthusiasm."
     ]
 }

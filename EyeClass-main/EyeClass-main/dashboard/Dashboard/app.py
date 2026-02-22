@@ -14,9 +14,16 @@ JSON_FOLDER = "JsonFilesData"
 os.makedirs(JSON_FOLDER, exist_ok=True)
 
 # Set to True to use real Gemini API, False for simulation
-ENABLE_AI = False
-GEMINI_API_KEY = "AIzaSyAxLyraUwHiY8Wk6hOjcjRPPq1sJ3YZ4RM"
+ENABLE_AI = True
 
+"""
+LIST OF API KEYS:
+AIzaSyDYegp6bwItdwJZjmEwQQ-6EW9TdFd9Qwo
+AIzaSyAI-zv5Xyqb_7KMncPUXLOvmbx08kI_YLQ
+AIzaSyDyyHWUefAFT83McZJi6YO3340EnzfygdE
+AIzaSyC8mSId8x1gQ-gJ6g9bmHVHu8iDM0-BTOk
+"""
+GEMINI_API_KEY = "AIzaSyB6vPuwiiuu5M4HKC4qQ7S2Bsm8TJrytL4"
 has_ai = False
 if ENABLE_AI and GEMINI_API_KEY:
     try:
@@ -28,6 +35,34 @@ if ENABLE_AI and GEMINI_API_KEY:
         print(f"AI CONNECTION FAILED: {e}")
 else:
     print("AI DISABLED")
+
+
+def clamp(value, min_val=0, max_val=100):
+    return max(min_val, min(value, max_val))
+
+
+def generate_realistic_blocks(avg_att):
+    blocks = []
+
+    # סיכוי של 40% שיהיה חלק בכיתה שמתנהג אחרת מהשאר
+    has_outlier = random.random() < 0.4
+    outlier_index = random.randint(0, 5) if has_outlier else -1
+
+    for i in range(6):
+        if i == outlier_index:
+            if avg_att > 60:
+                # הרוב מקשיבים, אבל חלק אחד מאבד קשב משמעותית
+                val = avg_att - random.randint(30, 45)
+            else:
+                # הרוב לא מקשיבים, אבל חלק אחד מקשיב מעולה
+                val = avg_att + random.randint(30, 45)
+        else:
+            # השאר עם סטייה קטנה מהממוצע (עד 15%)
+            val = avg_att + random.randint(-15, 15)
+
+        blocks.append({"id": i, "attention": clamp(val)})
+
+    return blocks
 
 
 # --- SMART DATA GENERATION ---
@@ -149,11 +184,25 @@ def generate_smart_suggestions(mode, blocks, avg_att, is_live):
 
 
 def generate_lesson_snapshot(mode="group", is_live=True):
-    if mode == "single":
-        blocks = [{"id": 0, "attention": random.randint(40, 100)}]
-    else:
-        blocks = [{"id": i, "attention": random.randint(35, 98)} for i in range(6)]
+    # פונקציית הטיה כלפי מעלה ליצירת נתונים מציאותיים יותר
+    def get_skewed_att():
+        r = random.random()
+        if r < 0.65:
+            return random.randint(70, 100)
+        elif r < 0.90:
+            return random.randint(50, 69)
+        else:
+            return random.randint(20, 49)
 
+    base_att = get_skewed_att()
+
+    if mode == "single":
+        blocks = [{"id": 0, "attention": base_att}]
+    else:
+        # שימוש בפונקציה החדשה שיוצרת מפת כיתה מציאותית עם חריגים
+        blocks = generate_realistic_blocks(base_att)
+
+    # נחשב את הממוצע האמיתי אחרי ההפרעות שהוספנו
     avg_att = sum(b['attention'] for b in blocks) // len(blocks)
 
     session["current_avg_attention"] = avg_att

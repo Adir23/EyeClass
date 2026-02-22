@@ -1,0 +1,47 @@
+{
+    "timestamp": 1769329206.958868,
+    "date_str": "25/01 10:20",
+    "subject": "Civics",
+    "topic": "Human Rights Law",
+    "mode": "group",
+    "avg_attention": 75,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 74
+        },
+        {
+            "id": 1,
+            "attention": 75
+        },
+        {
+            "id": 2,
+            "attention": 93
+        },
+        {
+            "id": 3,
+            "attention": 66
+        },
+        {
+            "id": 4,
+            "attention": 73
+        },
+        {
+            "id": 5,
+            "attention": 73
+        }
+    ],
+    "attention_time": [
+        66,
+        76,
+        78,
+        81,
+        78,
+        81
+    ],
+    "suggestions": [
+        "High engagement throughout the lesson.",
+        "Perfect use of visual aids.",
+        "Great pacing today!"
+    ]
+}

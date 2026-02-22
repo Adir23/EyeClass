@@ -1,3 +1,4 @@
+// LINE 397 IS FOR CHANGING TIME BETWEEN UPDATES IN LIVE LESSONS
 lucide.createIcons();
 let isLessonActive = false;
 let isSimulatingHistory = false;
@@ -12,6 +13,73 @@ let zenUpdatesCount = 0;
 let weeklyCharts = [];
 let currentGraphIndex = 0;
 const graphTitles = ["Monthly Engagement", "Subject Comparison", "Skill Progress"];
+
+// ==== מערכת סריקה - מוגנת ונקייה ====
+async function runRadarScan()
+{
+    return new Promise(async (resolve) =>
+    {
+        const overlay = document.getElementById('radarOverlay');
+        const logs = document.getElementById('radarLogs');
+        const status = document.getElementById('radarStatus');
+
+        // הגנת קריסה אם ה-HTML לא תקין
+        if (!overlay || !logs || !status)
+        {
+            resolve();
+            return;
+        }
+
+        overlay.style.display = 'flex';
+        logs.innerHTML = '';
+
+        const msgs = [
+            "Connecting to classroom cameras...",
+            "Identifying students' faces...",
+            "Initializing gaze tracking...",
+            "Calibrating engagement mesh...",
+            "Synchronizing live data stream..."
+        ];
+
+        for (let m of msgs)
+        {
+            status.innerText = m;
+            let d = document.createElement('div');
+            d.className = 'radar-log-item';
+            d.innerText = `> ${m}`;
+            logs.appendChild(d);
+            logs.scrollTop = logs.scrollHeight;
+            await new Promise(r => setTimeout(r, 450));
+        }
+
+        await new Promise(r => setTimeout(r, 300));
+        overlay.style.opacity = '0';
+
+        setTimeout(() =>
+        {
+            overlay.style.display = 'none';
+            overlay.style.opacity = '1';
+            resolve(); // ממשיך את הקוד רק לאחר סיום ההעלמה
+        }, 500);
+    });
+}
+
+function checkAttentionAlert(avg)
+{
+    const banner = document.getElementById('dropNotification');
+    const activeSection = document.querySelector('.view-section.active');
+
+    if (!banner) return;
+
+    if (isLessonActive && activeSection && activeSection.id !== 'view-dashboard' && avg < 45)
+    {
+        banner.classList.add('show');
+    }
+    else
+    {
+        banner.classList.remove('show');
+    }
+}
 
 let originalNavTo = function (viewId)
 {
@@ -57,6 +125,9 @@ let originalNavTo = function (viewId)
 
 function navTo(viewId)
 {
+    const banner = document.getElementById('dropNotification');
+    if (banner) banner.classList.remove('show');
+
     if (viewId === 'view-home' || viewId === 'view-chat')
     {
         isSimulatingHistory = false;
@@ -273,6 +344,11 @@ async function loadDashboardData(isStatic = false, specificFileId = null)
         window.latestBlocksData = data.blocks;
         window.currentTrendData = data.attention_time;
 
+        if (!isStatic)
+        {
+            checkAttentionAlert(data.avg_attention);
+        }
+
         if (isStatic)
         {
             window.replayFrames = [];
@@ -318,7 +394,7 @@ async function loadDashboardData(isStatic = false, specificFileId = null)
 
         if (isLessonActive && !isStatic)
         {
-            dashboardPollTimer = setTimeout(loadDashboardData, 3000);
+            dashboardPollTimer = setTimeout(loadDashboardData, 5000);
         }
     }
     catch (e)
@@ -425,7 +501,6 @@ function renderAISuggestions(suggestions)
     suggestions.forEach(text =>
     {
         const item = document.createElement('div');
-        // הקצאת מחלקה ייעודית שה-CSS יודע לכווץ במצב היסטוריה ולהגדיל בלייב
         item.className = 'ai-insight-item';
         item.innerHTML = `<i data-lucide="sparkles" size="18" style="min-width:18px; color:#7C3AED; display:flex;"></i> <span style="line-height:1.25;">${text}</span>`;
         list.appendChild(item);
@@ -433,6 +508,7 @@ function renderAISuggestions(suggestions)
     lucide.createIcons();
 }
 
+// ==== תוקן: הגרף לא ייחתך אף פעם. חישוב גבולות דינמי ====
 function renderChart(dataPoints)
 {
     const ctx = document.getElementById('lineChart');
@@ -441,15 +517,26 @@ function renderChart(dataPoints)
         return;
     }
 
+    const validData = dataPoints.filter(val => val !== null);
+    const minVal = Math.min(...validData);
+    const maxVal = Math.max(...validData);
+
+    // מרווח חכם אוטומטי (Padding) למעלה ולמטה
+    const padding = Math.max(10, (maxVal - minVal) * 0.15);
+    const chartMin = Math.max(0, minVal - padding);
+    const chartMax = Math.min(100, maxVal + padding);
+
     if (chartInstance)
     {
         chartInstance.data.datasets[0].data = dataPoints;
+        chartInstance.options.scales.y.min = chartMin;
+        chartInstance.options.scales.y.max = chartMax;
         chartInstance.update();
         return;
     }
     const context = ctx.getContext('2d');
     let gradient = context.createLinearGradient(0, 0, 0, 150);
-    // גרדיאנט חזק ויפה יותר
+
     gradient.addColorStop(0, 'rgba(124, 58, 237, 0.45)');
     gradient.addColorStop(1, 'rgba(124, 58, 237, 0.0)');
 
@@ -475,7 +562,7 @@ function renderChart(dataPoints)
             maintainAspectRatio: false,
             layout: { padding: { left: -10, bottom: 0, top: 10, right: 10 } },
             plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-            scales: { x: { display: false }, y: { display: false, min: 0, max: 100 } },
+            scales: { x: { display: false }, y: { display: false, min: chartMin, max: chartMax } },
             animation: { duration: 1000 }
         }
     });
@@ -503,16 +590,11 @@ function closeEndModal()
 
 function handleOverlayClick(e)
 {
-    if (e.target.id === 'startModal')
+    // סוגר את המודלים רק אם לוחצים על הרקע הכהה
+    if (e.target.classList.contains('modal-overlay'))
     {
         closeStartSheet();
-    }
-    if (e.target.id === 'historyModal')
-    {
         closeHistoryModal();
-    }
-    if (e.target.id === 'endModal')
-    {
         closeEndModal();
     }
 }
@@ -535,12 +617,18 @@ function loadSimulation(fileId, subjectName)
     loadDashboardData(true, fileId);
 }
 
+// תוקן: התחלת שיעור תקינה שממתינה לסורק
 async function handleStart(e)
 {
     e.preventDefault();
     const subject = document.getElementById('inpSubject').value;
     const topic = document.getElementById('inpTopic').value;
     const isSingle = document.getElementById('inpSingleMode').checked;
+
+    closeStartSheet();
+
+    // מפעיל את האנימציה ומחכה שהיא תסתיים לפני שהוא ממשיך
+    await runRadarScan();
 
     try
     {
@@ -555,7 +643,7 @@ async function handleStart(e)
         document.getElementById('liveSubjectTitle').innerText = subject;
         document.getElementById('liveIndicator').style.display = 'flex';
         document.getElementById('powerBtn').style.display = 'flex';
-        closeStartSheet();
+
         updateUIState();
         navTo('view-dashboard');
         loadDashboardData();

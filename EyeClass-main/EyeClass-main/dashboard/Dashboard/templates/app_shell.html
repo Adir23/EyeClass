@@ -12,6 +12,21 @@
 
     <div class="phone-border" id="phoneBorder">
         <div class="phone-screen" id="appFrame">
+
+            <div id="dropNotification" class="drop-notification" onclick="navTo('view-dashboard')">
+                <i data-lucide="alert-triangle" size="18"></i>
+                <span>Attention Drop in Class!</span>
+            </div>
+
+            <div id="radarOverlay" class="radar-overlay" style="display:none;">
+                <div class="radar-line"></div>
+                <div class="radar-content">
+                    <i data-lucide="scan" size="48" class="scan-icon"></i>
+                    <h2 id="radarStatus">Initializing Scan...</h2>
+                    <div class="radar-logs" id="radarLogs"></div>
+                </div>
+            </div>
+
             <header class="app-header">
                 <div class="header-row" id="homeHeader">
                     <div class="user-greeting">

@@ -1,0 +1,27 @@
+{
+    "timestamp": 1770296924.606686,
+    "date_str": "05/02 15:08",
+    "subject": "Biology",
+    "topic": "Cellular Respiration",
+    "mode": "single",
+    "avg_attention": 85,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 85
+        }
+    ],
+    "attention_time": [
+        80,
+        83,
+        80,
+        86,
+        85,
+        82
+    ],
+    "suggestions": [
+        "The class tracked complex concepts well.",
+        "Great pacing today!",
+        "High engagement throughout the lesson."
+    ]
+}

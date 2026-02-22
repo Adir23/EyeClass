@@ -1,46 +1,45 @@
 {
-    "timestamp": 1770251953.994049,
-    "date_str": "05/02 02:39",
+    "timestamp": 1769568236.707986,
+    "date_str": "28/01 04:43",
     "subject": "English",
     "topic": "Creative Writing Workshop",
     "mode": "group",
-    "avg_attention": 50,
+    "avg_attention": 52,
     "blocks": [
         {
             "id": 0,
-            "attention": 41
+            "attention": 65
         },
         {
             "id": 1,
-            "attention": 65
+            "attention": 44
         },
         {
             "id": 2,
-            "attention": 52
+            "attention": 56
         },
         {
             "id": 3,
-            "attention": 54
+            "attention": 38
         },
         {
             "id": 4,
-            "attention": 48
+            "attention": 57
         },
         {
             "id": 5,
-            "attention": 65
+            "attention": 54
         }
     ],
     "attention_time": [
-        43,
-        43,
-        46,
-        52,
-        51,
-        55
+        47,
+        48,
+        48,
+        45,
+        42,
+        50
     ],
     "suggestions": [
-        "Call on specific students to increase focus.",
         "Try a quick 'think-pair-share' activity.",
         "Provide more real-world examples."
     ]

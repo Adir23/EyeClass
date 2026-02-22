@@ -1,0 +1,28 @@
+{
+    "timestamp": 1770254664.301811,
+    "date_str": "05/02 03:24",
+    "subject": "Literature",
+    "topic": "Shakespearean Tragedies",
+    "mode": "single",
+    "avg_attention": 85,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 85
+        }
+    ],
+    "attention_time": [
+        77,
+        84,
+        84,
+        84,
+        75,
+        85
+    ],
+    "suggestions": [
+        "Great pacing today!",
+        "The class tracked complex concepts well.",
+        "Great tone and enthusiasm.",
+        "Ask students to read a passage aloud to regain focus."
+    ]
+}

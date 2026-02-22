@@ -1,0 +1,46 @@
+{
+    "timestamp": 1771607454.467179,
+    "date_str": "20/02 19:10",
+    "subject": "Psychology",
+    "topic": "Cognitive Biases",
+    "mode": "group",
+    "avg_attention": 48,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 48
+        },
+        {
+            "id": 1,
+            "attention": 62
+        },
+        {
+            "id": 2,
+            "attention": 63
+        },
+        {
+            "id": 3,
+            "attention": 42
+        },
+        {
+            "id": 4,
+            "attention": 39
+        },
+        {
+            "id": 5,
+            "attention": 35
+        }
+    ],
+    "attention_time": [
+        57,
+        39,
+        38,
+        39,
+        54,
+        57
+    ],
+    "suggestions": [
+        "Energy dropped significantly; try an interactive activity.",
+        "Consider adding a 5-minute brain break."
+    ]
+}

@@ -1,0 +1,46 @@
+{
+    "timestamp": 1770558349.003338,
+    "date_str": "08/02 15:45",
+    "subject": "Chemistry",
+    "topic": "Thermodynamics",
+    "mode": "group",
+    "avg_attention": 61,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 48
+        },
+        {
+            "id": 1,
+            "attention": 69
+        },
+        {
+            "id": 2,
+            "attention": 58
+        },
+        {
+            "id": 3,
+            "attention": 55
+        },
+        {
+            "id": 4,
+            "attention": 72
+        },
+        {
+            "id": 5,
+            "attention": 66
+        }
+    ],
+    "attention_time": [
+        55,
+        56,
+        54,
+        71,
+        55,
+        59
+    ],
+    "suggestions": [
+        "Call on specific students to increase focus.",
+        "Try a quick 'think-pair-share' activity."
+    ]
+}

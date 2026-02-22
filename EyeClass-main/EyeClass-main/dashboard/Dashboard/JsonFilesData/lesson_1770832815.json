@@ -1,0 +1,47 @@
+{
+    "timestamp": 1770832815.412319,
+    "date_str": "11/02 20:00",
+    "subject": "Mathematics",
+    "topic": "Calculus: Derivatives",
+    "mode": "group",
+    "avg_attention": 87,
+    "blocks": [
+        {
+            "id": 0,
+            "attention": 92
+        },
+        {
+            "id": 1,
+            "attention": 79
+        },
+        {
+            "id": 2,
+            "attention": 89
+        },
+        {
+            "id": 3,
+            "attention": 80
+        },
+        {
+            "id": 4,
+            "attention": 92
+        },
+        {
+            "id": 5,
+            "attention": 95
+        }
+    ],
+    "attention_time": [
+        81,
+        83,
+        79,
+        86,
+        91,
+        77
+    ],
+    "suggestions": [
+        "Excellent student participation!",
+        "High engagement throughout the lesson.",
+        "Great tone and enthusiasm."
+    ]
+}
