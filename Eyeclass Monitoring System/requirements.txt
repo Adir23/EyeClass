@@ -1,0 +1,10 @@
+opencv-python==4.9.0.80
+mediapipe==0.10.9
+numpy==1.26.4
+SpeechRecognition>=3.10.0
+PyAudio>=0.2.14
+faster-whisper>=1.0.0
+Pillow>=10.2.0
+python-bidi>=0.4.2
+protobuf==3.20.3
+google-generativeai>=0.8.0

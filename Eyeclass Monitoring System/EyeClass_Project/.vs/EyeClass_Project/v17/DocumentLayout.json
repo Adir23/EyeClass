@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\Random\\HighClassCauseImHighAf\\EyeClass_Project\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{612937AE-7B11-4FB6-A4CA-9C496E870A32}|EyeClass_Project.pyproj|C:\\Users\\User\\Desktop\\Random\\HighClassCauseImHighAf\\EyeClass_Project\\EyeClass_Project.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{612937AE-7B11-4FB6-A4CA-9C496E870A32}|EyeClass_Project.pyproj|solutionrelative:EyeClass_Project.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EyeClass_Project.py",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\Random\\HighClassCauseImHighAf\\EyeClass_Project\\EyeClass_Project.py",
+              "RelativeDocumentMoniker": "EyeClass_Project.py",
+              "ToolTip": "C:\\Users\\User\\Desktop\\Random\\HighClassCauseImHighAf\\EyeClass_Project\\EyeClass_Project.py",
+              "RelativeToolTip": "EyeClass_Project.py",
+              "ViewState": "AgIAAKQAAAAAAAAAAAAuwMQAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2025-11-25T11:04:01.209Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

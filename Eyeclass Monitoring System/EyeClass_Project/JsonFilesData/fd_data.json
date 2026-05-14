@@ -1,0 +1,131 @@
+{
+    "metadata": {
+        "lesson": "fd",
+        "duration_sec": 19.54
+    },
+    "analysis": {
+        "attentive_sec": 2.18,
+        "distracted_sec": 17.36
+    },
+    "behavior": {
+        "phone_events": 0,
+        "drowsy_events": 0
+    },
+    "transcription": [],
+    "telemetry": [
+        {
+            "timestamp": 1771762335.03,
+            "relative_time_sec": 1.01,
+            "state": "Distracted",
+            "reason": "Looking Away from Screen"
+        },
+        {
+            "timestamp": 1771762336.04,
+            "relative_time_sec": 2.01,
+            "state": "Attentive",
+            "reason": "Focused"
+        },
+        {
+            "timestamp": 1771762337.04,
+            "relative_time_sec": 3.02,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762338.05,
+            "relative_time_sec": 4.03,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762339.05,
+            "relative_time_sec": 5.03,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762340.06,
+            "relative_time_sec": 6.03,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762341.07,
+            "relative_time_sec": 7.04,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762342.07,
+            "relative_time_sec": 8.04,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762343.07,
+            "relative_time_sec": 9.05,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762344.08,
+            "relative_time_sec": 10.05,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762345.08,
+            "relative_time_sec": 11.06,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762346.09,
+            "relative_time_sec": 12.06,
+            "state": "Attentive",
+            "reason": "Focused"
+        },
+        {
+            "timestamp": 1771762347.1,
+            "relative_time_sec": 13.07,
+            "state": "Distracted",
+            "reason": "Looking Away from Screen"
+        },
+        {
+            "timestamp": 1771762348.1,
+            "relative_time_sec": 14.07,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762349.1,
+            "relative_time_sec": 15.08,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762350.11,
+            "relative_time_sec": 16.09,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762351.12,
+            "relative_time_sec": 17.1,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762352.13,
+            "relative_time_sec": 18.1,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        },
+        {
+            "timestamp": 1771762353.13,
+            "relative_time_sec": 19.11,
+            "state": "Distracted",
+            "reason": "Head Turned (Looking Left)"
+        }
+    ]
+}
